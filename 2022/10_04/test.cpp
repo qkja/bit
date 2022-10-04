@@ -1,22 +1,151 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stack>
 #include <algorithm>
+#include <queue>
 using namespace std;
 
 class Solution {
 public:
 
+  struct TreeNode {
+ 	int val;
+ 	struct TreeNode *left;
+ 	struct TreeNode *right;
+ 	TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+  };
 
-  string LeftRotateString(string str, int n) {
-   
-   if(str.empty())
-     return "";
-   n = n % str.size();
+  int KthNode(TreeNode* proot, int k) {
+    if(proot == nullptr || k <= 0)
+      return -1;
+    vector<int> v;
+    stack<TreeNode*> s;
+    TreeNode* cur = proot;
+    while(cur != nullptr || !s.empty())
+    {
+      if(cur)
+      {
+        s.push(cur);
+        cur = cur->left;
+      }
+      else 
+      {
 
-
-
+        cur = s.top();
+        v.push_back(cur->val);
+        s.pop();
+        cur = cur->right;
+      }
+      
+    }
+    if(k > (int)v.size())
+      return -1;
+    return v[k-1];
   }
+
+  //struct TreeNode {
+  //  int val;
+  //  struct TreeNode *left;
+  //  struct TreeNode *right;
+  //  TreeNode(int x) :
+  //          val(x), left(NULL), right(NULL) {
+  //  }
+  //};
+  //vector<vector<int> > Print(TreeNode* pRoot) {
+  //    vector<vector<int>> vv;
+  //    if (pRoot == nullptr) {
+  //        return vv;
+  //    }
+  //    queue<TreeNode*> q;
+  //    q.push(pRoot);
+  //    int size = 1;
+  //    vector<int> v;
+  //    int flag = 0;
+  //    while (size--) {
+  //        TreeNode* ret = q.front();
+  //        q.pop();
+  //        if (ret->left)
+  //            q.push(ret->left);
+  //        if (ret->right)
+  //            q.push(ret->right);
+
+  //        v.push_back(ret->val);
+
+  //        if (size == 0)
+  //        {
+  //            if (flag == 0) 
+  //            {
+  //                flag = 1;
+  //            }
+  //            else 
+  //            {
+  //                // 逆置一下
+  //                reverse(v.begin(), v.end());
+  //                flag = 0;
+  //            }
+  //            vv.push_back(v);
+  //            v.clear();
+  //            size = q.size();
+  //        }
+
+  //    }// endofwhile
+  //    return vv;
+  //}
+
+
+  //void reverser(string& str, int begin, int end)
+  //{
+  //  while(begin < end)
+  //  {
+  //    std::swap(str[begin],str[end]);
+  //    begin++;
+  //    end--;
+  //  }
+  //}
+
+  //// 这里我们默认空格不连续
+  //string ReverseSentence(string str) {
+  //  if(str.empty())
+  //    return "";
+
+  //  // 局部逆置 这里 需要 得到 空格' ';
+  //  size_t begin = 0;
+  //  size_t end = 0;
+  //  while(end != string::npos)
+  //  {
+  //    // 找字串
+  //    end = str.find(' ', begin);
+  //    if(end == string::npos)
+  //    {
+  //      reverser(str, begin, str.size() - 1);
+  //      break;
+  //    }
+  //    reverser(str, begin, end-1);
+  //    begin = end + 1;
+  //  }
+  //  reverser(str, 0, str.size()-1);
+  //  return str;
+  //}
+
+  // 字符串左移
+  // 这个用一个比较 垃圾的写法
+  //void LeftRotateStringHelper(string& str) {
+  //  char ch = str[0];
+  //  str.erase(0,1);
+  //  str += ch;
+  //}
+  //string LeftRotateString(string str, int n) {
+  // 
+  // if(str.empty())
+  //   return "";
+  // n = n % str.size();// 这一点很重要
+  // for(int i=0;i < n; i++)
+  // {
+  //   LeftRotateStringHelper(str);
+  // }
+  // return str;
+  //}
   // 滑动窗口的 问题
   //vector<vector<int> > FindContinuousSequence(int sum) {
   //  vector<vector<int>> vv;
@@ -225,4 +354,3 @@ public:
 //    }
 //    return 0;
 //}
-
