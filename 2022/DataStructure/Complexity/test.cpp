@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <assert.h>
+#include <vector>
+
 using namespace std;
 // 最坏的情况
 //const char* myStrchr(const char* str,int character)
@@ -157,3 +159,90 @@ using namespace std;
 //  cout <<"hello"<<endl;
 //  return 0;
 //}
+
+
+
+
+///////////////////////////////////////////
+// 空间复杂度
+// 这里 只谈一点 时间时间积累的 空间是可以重复的
+// 等下把斐波那契数列的空间复杂度度博客添加一下
+// 下面的轮转数组我们用三种写法
+
+class Solution {
+public:
+  void reverse(vector<int>& v, int begin, int end)
+  {
+    while(begin < end)
+    {
+      int ret = v[begin];
+      v[begin] = v[end];
+      v[end] = ret;
+      begin++;
+      end--;
+    }
+  }
+  // 三次逆置
+  void rotate(vector<int>& nums, int k) {
+    if(nums.empty())
+      return;
+
+    k %= nums.size();
+    reverse(nums, 0, nums.size() - k - 1);
+    reverse(nums, nums.size() - k, nums.size() - 1);
+    reverse(nums, 0, nums.size() - 1);
+  }
+
+  // 解法二 开辟一个数组 注意 这里 需要 k%size()
+  // 防止数组溢出
+  // 当k == size的时候,先当与没有移动
+  //void rotate(vector<int>& nums, int k) {
+  //  if(nums.empty())
+  //    return;
+  //  vector<int> v;
+  //  k %= nums.size();
+  //  v.reserve(nums.size());
+  //  //把 后 k 个放在前面
+  //  //注意下标
+  //  for(size_t i = nums.size() - k; i < nums.size(); i++)
+  //  {
+  //    v.push_back(nums[i]);
+  //  }
+  //  //把前size-k个放在数组后面
+  //  for(int i = 0; i < nums.size() - k; i++)
+  //  {
+  //    v.push_back(nums[i]);
+  //  }
+  //  // 数组倒回去
+  //  for(size_t i = 0; i < nums.size(); i++)
+  //  {
+  //    nums[i] = v[i];
+  //  }
+  //}
+    // 解法一 暴力解法 这个应该会超出时间限制
+    //void rotateHelper(vector<int>& nums) {
+    //  // 保存最后一个元素
+    //  int ret = nums[nums.size()-1];
+    //  int end = nums.size() - 1;
+    //  while(end > 0)
+    //  {
+    //    nums[end] = nuns[end-1];
+    //    end--;
+    //  }
+
+    //  nums[end] = ret;
+    //}
+
+    //void rotate(vector<int>& nums, int k) {
+    //  if(nums.empty())
+    //    return;
+    //  for(int i = 0; i < k; i++)
+    //  {
+    //    // 右旋
+    //    rotateHelper(nums);
+    //  }
+    //}
+};
+
+
+
