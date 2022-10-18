@@ -1,20 +1,110 @@
 #include <iostream>
 #include <stdio.h>
 #include <vector>
+#include <algorithm>
 using namespace std;
+class Solution {
+public:
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+      if(nums1.empty() || nums2.empty())
+        return;
+      int i = m - 1;
+      int j = n -1;
+      int desc = nums1.size() - 1;
 
-int main()
-{
-  cout << "hello C++" << endl;
-  cout << "hello C++" << endl;
-  cout << "hello C++" << endl;
-  cout << "hello C++" << endl;
-  cout << "hello C++" << endl;
-  cout << "hello C++" << endl;
-  return 0;
-}
+      while(i >= 0 && j>= 0)
+      {
+        if(nums1[i] <= nums2[j])
+        {
+          nums1[desc--] = nums2[j--];
+        }
+        else 
+        {
+          nums1[desc--] = nums1[i--];
+        }
+      }
+
+      if(i < 0)
+      {
+        for(i = 0; i <= j; i++)
+        {
+          nums1[i] = nums2[i];
+        }
+      }
+
+    }
+};
 
 
+
+
+
+
+
+
+
+
+
+//class Solution {
+//public:
+//    // 这里我不确定 这个 vector 是否允许更改
+//    void twoSumHelper(vector<int> nums, int target, vector<int>& result) {
+//      sort(nums.begin(), nums.end());                           
+//      int left = 0;
+//      int right = nums.size() - 1;
+//      while(left < right)
+//      {
+//        int sum = nums[left] + nums[right];
+//        if(target == sum)
+//        {
+//          result.resize(2);
+//          result[0] =nums[left];
+//          result[1] = nums[right];
+//          break;
+//        }
+//        else if(sum > target)
+//        {
+//          right--;
+//        }
+//        else
+//        {
+//          left++;
+//        }
+//      }
+//    }
+//    vector<int> twoSum(vector<int>& nums, int target) {
+//      vector<int> result;
+//      if(nums.empty())
+//        return result;
+//      twoSumHelper( nums, target, result);
+//      if(!result.empty())
+//      {
+//          int left = result[0];
+//          int right = result[1];
+//          result.clear();
+//          for(int i = 0 ;i < nums.size();i++)
+//          {
+//              if(left == nums[i] || right == nums[i])
+//              {
+//                  result.push_back(i);
+//              }
+//          }
+//      }
+//      return result;
+//    }
+//};
+
+
+//int main()
+//{
+//  cout << "hello C++" << endl;
+//  cout << "hello C++" << endl;
+//  cout << "hello C++" << endl;
+//  cout << "hello C++" << endl;
+//  cout << "hello C++" << endl;
+//  cout << "hello C++" << endl;
+//  return 0;
+//}
 
 //long long NumberOfRoot(long long n)
 //{

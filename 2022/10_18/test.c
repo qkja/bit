@@ -2,59 +2,69 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <stdio.h>
+// w 打开空文件
+// 细节昨晚
+
+//见见猪炮
+//man 2 open 最重要的
+
+// 第二个 参数flags   mode 文件不存在  为何可以创建 权限
+// 返回值 int 
+// 使用 位图方式 传递标记位
+// strlen 不要+1  这是C语言的代码
+// > 文件  清空
+// 文件打开 w 会自动清空 覆盖为何 不清空
+// open 的返回值
+//
+
+
+
 // 我们再来测试一下
 // int execlp(const char *file, const char *arg, ...);
 //             找到他            如何执
 // 我们执行指令的时候,默认的搜索路径在 PATH　中
 // 这里的p 就是PATH 
-int main()    
-{    
-  pid_t id = fork();    
-  if(id == 0)    
-  {    
-    // child    
-    // 目前我们执行程序 都是指令  这里我们测试其他的语言,自己的程序
-    // int execle(const char *path, const char *arg,
-    //              ..., char * const envp[]);
-
-
-    // execl("/home/bit/104/2022/10_18/mycmd", "mycmd", NULL);
-    
-
-    //printf("==============================================\n");
-
-    //execl("./mycmd", "mycmd", NULL);
-
-
-
-
-
-
-    //char* const envp[] = {
-    //  (char*)"ls",
-    //  (char*)"-a",
-    //  (char*)"-l",
-    //  NULL
-    //};
-    //execvp("ls", envp);   // 这里的两个 ls 作用是不一样的 
-    //execlp("ls", "ls", "-a", "-l", NULL);   // 这里的两个 ls 作用是不一样的 
-    // 只要执行这里 就是替换失败    
-    exit(1);// 到这里 就是替换失败    
-  }    
-  // 倒着里一定是父进程的代码    
-  int status = 0;    
-  int ret = waitpid(id, &status, 0); // 阻塞等待    
-  sleep(2);
-  if(ret == id)    
-  {    
-    printf("我是父进程, 等待成功, 退出信号 %d ,退出码 %d\n"    
-        , status&0x7f    
-      ,(status & 0xff00)>>8);    
-  }    
-  return 0;    
-}    
-    
-
+//int main()    
+//{    
+//  pid_t id = fork();    
+//  if(id == 0)    
+//  {    
+//    // child    
+//    // 目前我们执行程序 都是指令  这里我们测试其他的语言,自己的程序
+//    // int execle(const char *path, const char *arg,
+//    //              ..., char * const envp[]);
+//
+//
+//    // execl("/home/bit/104/2022/10_18/mycmd", "mycmd", NULL);
+//    
+//
+//    //printf("==============================================\n");
+//
+//    //execl("./mycmd", "mycmd", NULL);
+//
+//    //char* const envp[] = {
+//    //  (char*)"ls",
+//    //  (char*)"-a",
+//    //  (char*)"-l",
+//    //  NULL
+//    //};
+//    //execvp("ls", envp);   // 这里的两个 ls 作用是不一样的 
+//    //execlp("ls", "ls", "-a", "-l", NULL);   // 这里的两个 ls 作用是不一样的 
+//    // 只要执行这里 就是替换失败    
+//    exit(1);// 到这里 就是替换失败    
+//  }    
+//  // 倒着里一定是父进程的代码    
+//  int status = 0;    
+//  int ret = waitpid(id, &status, 0); // 阻塞等待    
+//  sleep(2);
+//  if(ret == id)    
+//  {    
+//    printf("我是父进程, 等待成功, 退出信号 %d ,退出码 %d\n"    
+//        , status&0x7f    
+//      ,(status & 0xff00)>>8);    
+//  }    
+//  return 0;    
+//}    
 
 //int main()
 //{
@@ -64,9 +74,6 @@ int main()
 //  execl("/usr/bin/ls", "ls", "-a", "-l", NULL);
 //  printf("我是 父进程,pid %d\n", getpid());
 //  return 0;
-//}
-
-
 // 子进程发生程序替换,会影响父进程码 不会 进程具有独立性
 // 为什么 ?
 // 如何做到的?
@@ -96,5 +103,3 @@ int main()
 //  }
 //  return 0;
 //}
-//
-//
