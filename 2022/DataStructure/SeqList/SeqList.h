@@ -6,6 +6,15 @@
 #include <stdlib.h>
 
 #endif 
+//#define NUM 100
+//struct StaticSeqList
+//{
+//  int array[NUM];
+//  size_t size;
+//};
+
+
+
 
 /*
  * 这里只简单 的 写一下
@@ -29,6 +38,7 @@ typedef struct SeqList
 // 尤其是里面的指针  这也是简单的值拷贝
 void SeqListInit(SeqList* ps);
 
+//void SeqListInit(SeqList ps);
 // 这里可以用结构体传参吗
 void SeqListDestroy(SeqList* ps);
 
