@@ -19,9 +19,6 @@ bool myCircularQueueEnQueue(MyCircularQueue* obj, int value) {
   // 判满
   if(myCircularQueueIsFull(obj))
     return false;
-  
-
-
 
   obj->array[obj->tail] = value;
   if(obj->tail == obj->cap-1)
@@ -218,7 +215,7 @@ void QueuePop(Queue* pq)
   pq->head = next;
   // 要一起为空
   if(next == NULL)
-    pq->tail == NULL:
+    pq->tail = NULL;
 }
 
 bool QueueEmpty(Queue* pq)
