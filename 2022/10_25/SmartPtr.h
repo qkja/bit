@@ -100,6 +100,15 @@ namespace bit
   
   
   template<class T>
+  struct default_delete
+  {
+    void operator()(T* ptr)
+    {
+      delete ptr;
+    }
+  };
+
+  template<class T, class D = default_delete<T>>
   class unique_ptr
   {
     public:
@@ -125,7 +134,13 @@ namespace bit
 
       ~unique_ptr()
       {
-          delete _ptr; // 对于 多个自定义对象   等会在谈
+        if(_ptr)
+        {
+          D del;
+          del(_ptr);
+          _ptr = nullptr;
+        }
+          //delete _ptr; // 对于 多个自定义对象   等会在谈
       }
     private:
       T* _ptr;
@@ -133,7 +148,9 @@ namespace bit
 
 
   // shared_ptr 
-  template<class T>
+  // 定制删除器 有点不一样
+  // 但是这里我们实现不了
+  template<class T, class D = default_delete<T> >
   class shared_ptr
   {
     public:
@@ -153,8 +170,8 @@ namespace bit
 
       shared_ptr<T>& operator=(shared_ptr<T>& s)
       {
-        if(this == &s)
-          return *this;
+        //if(this == &s)
+          //return *this;
         if(_ptr == s._ptr)
           return *this;
         // 这个很 麻烦
@@ -187,25 +204,31 @@ namespace bit
         return _ptr;
       }
 
-
-
       void Release()
-		 {
-       if (--(*_pCount) == 0 && _ptr)
-		 	 {
+		  {
+        if (--(*_pCount) == 0 && _ptr)
+		 	  {
 
-         std::cout << "delete" << _ptr << std::endl;
-				 delete _ptr;
-				 _ptr = nullptr;
+          //std::cout << "delete" << _ptr << std::endl;
+				  //delete _ptr;
+          D del;
+          del(_ptr);
 
-				 delete _pCount;
-				 _pCount = nullptr;
-			 }
-		}
+				  delete _pCount;
+				  _pCount = nullptr;
+				  _ptr = nullptr;
+			  }
+	   	}
+
       ~shared_ptr()
 		  {
 		  	Release();
 		  }
+
+      T* get()const 
+      {
+        return _ptr;
+      }
 
       /*~shared_ptr()
       {
@@ -220,6 +243,47 @@ namespace bit
     private:
       T* _ptr;
       int* _pCount;
+  };
+
+  template<class T>
+  class weak_ptr
+  {
+    public:
+      weak_ptr(T* ptr = nullptr)
+        :_ptr(ptr)
+      {}
+
+      weak_ptr(shared_ptr<T>& s)
+      {
+        _ptr = s.get();
+      }
+
+      weak_ptr<T>& operator=(shared_ptr<T>& s)
+      {
+        if(_ptr != s._ptr)
+        {
+           // 这里 不free掉之前的
+           _ptr = s.get();
+        }
+
+        return *this;
+      }
+
+      T& operator*()
+      {
+        return *_ptr;
+      }
+
+      T* operator->()
+      {
+        return _ptr;
+      }
+
+      ~weak_ptr()
+		  {}
+
+    private:
+      T* _ptr;
   };
 
 }
