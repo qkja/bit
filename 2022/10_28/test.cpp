@@ -270,6 +270,20 @@ int main()
 	return 0;
 }
 
+class A final
+{
+
+};
+
+
+class B
+{
+public:
+  B()
+  {};
+private:
+  B(const B&) = delete;
+};
 
 // 两者的区别  饿汉在加载一直满 可以理解为黑屏
 // 懒汉 
