@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 int main()
 {
-  printf("hello myshell\n");
+  printf("MYVAL:%s\n" ,getenv("MYVAL"));
+  //printf("hello myshell\n");
   return 0;
 }
