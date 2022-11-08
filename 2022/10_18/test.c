@@ -2,6 +2,68 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+
+int main()    
+{    
+  pid_t id = fork();    
+  if(id == 0)    
+  {    
+    // child    
+    extern char**environ;
+
+    //int execle(const char *path, const char *arg,
+    //    ..., char * const envp[]);
+
+    char* const env[] = {
+      (char*)"MYPATH=YOUCANSEEME!!",
+      NULL
+    };
+    // 这里自己倒了一个环境变量
+    // e 添加环境变量 是 覆盖式 的
+    //execle("./mycmd", "mycmd", NULL
+    //    ,env);
+
+    execle("./mycmd", "mycmd", NULL
+        ,environ);
+
+    // 目前我们执行程序 都是指令  这里我们测试其他的语言,自己的程序
+    // int execle(const char *path, const char *arg,
+    //              ..., char * const envp[]);
+    //execl("/home/bit/104/2022/10_18/mycmd", "mycmd", NULL);
+    //execl("./mycmd", "mycmd", NULL);
+    // 只要执行这里 就是替换失败    
+    exit(1);// 到这里 就是替换失败    
+  }    
+  // 倒着里一定是父进程的代码    
+
+  int status = 0;    
+  int ret = waitpid(id, &status, 0); // 阻塞等待    
+  sleep(2);
+  if(ret == id)    
+  {    
+    printf("我是父进程, 等待成功, 退出信号 %d ,退出码 %d\n"    
+        , status&0x7f    
+      ,(status & 0xff00)>>8);    
+  }    
+  return 0;    
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // w 打开空文件
 // 细节昨晚
 

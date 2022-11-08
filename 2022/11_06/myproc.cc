@@ -8,15 +8,26 @@
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/types.h>
 using namespace std;
 
 void handler(int signo)
 {
   cout << "我是一个进程,刚刚捕捉了一个信号" << signo << endl;
 }
-
+int cnt = 0;
 int main()
 {
+
+  alarm(1); // 我们的配置 相当于 2-3000的笔记本
+  // 捕捉
+  // 闹钟
+  while(1)
+  {
+    cnt++;
+  }
+  // alorm 相当于定义了一个闹钟
+  // abort() 捕捉了也会推出
 
   // 什么是信号  生活中  红绿灯  下课铃声  信号枪 烽火台 旗语
   // 我们是如何得知这些东西的  准确说 是如何明白 这些信号的含义的
@@ -106,24 +117,33 @@ int main()
   // 什么信号 -> 位图bit位
 
 
-
-
   // 信号产生前 
   // 硬件 signal() 对一个信号 设置特定的处理操作 这里是 自定义 回调方法   ctr+c 发送  2号信号 给目标进程 默认是 终止当前进程 这里我们是自定义ctr +\ 是3号信号
   //
   // signal(2, handler);
-  signal(SIGINT, handler);   // 注意 这里不是在调用hander 方法  只有产生相应的信号 才会调用
-  sleep(3);
+  //signal(SIGINT, handler);   // 注意 这里不是在调用hander 方法  只有产生相应的信号 才会调用
 
+  //sleep(3);
+
+  // 注意   9号信号我们自定义结束后,也不会发生变化
+  // 上面的两种 都是键盘产生  那么是是谁给进程 发送 的信号呢?键盘是没有资格发的
+  // 收到OS管理,谁都不相信 键盘产生信号,OS修改.这里涉及到中断 外设在CPU硬件上是可以(注释是可以,不是进场)沟通的 CPU存在很多针脚  这里先不谈  不是计算机专业的  就是OS拿到ctr+c 后面解释他
+  // 可以把按键映射处一个表  OS识别出来　这些事键盘的驱动程序来做的　 这里我们不喜欢称发送，最好称为修改　操作系统是如何给进程发送（修改）信号的　OS肯定能找到每一个进程的task_struct ,就能找到位图 预期叫做发送,不如叫做写入信号
+  //cout << "进程设置完比" << endl;
+  //sleep(3);
+
+  //while(1)
+  //{
+  //  cout << "我是一个正在运行的进程: pid" << getpid() << endl;
+  //  sleep(1);
+  //}
+
+
+  // 通过系统接口 完成发送信号
+
+  // int kill(pid_t pid, int sig);
   
 
-  cout << "进程设置完比" << endl;
-  sleep(3);
 
-  while(1)
-  {
-    cout << "我是一个正在运行的进程: pid" << getpid() << endl;
-    sleep(1);
-  }
   return 0;
 }

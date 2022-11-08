@@ -4,52 +4,58 @@
 #include <string>
 using namespace std;
 
+        
 
 
-class Solution {
-public:
-    /**
-     * 
-     * @param m int整型 
-     * @param n int整型 
-     * @return int整型
-     */
-    int uniquePaths(int m, int n) {
-        // write code here
+int main()
+{
+    return 0;
+}
+
+// class Solution {
+// public:
+//     /**
+//      * 
+//      * @param m int整型 
+//      * @param n int整型 
+//      * @return int整型
+//      */
+//     int uniquePaths(int m, int n) {
+//         // write code here
         
       
-      //f(i,j) 子问题  到达任意一个点得路径个数
-      //f(i,j) 是由 f(i-1,j) 和  f(i,j-1)这个两个来得
+//       //f(i,j) 子问题  到达任意一个点得路径个数
+//       //f(i,j) 是由 f(i-1,j) 和  f(i,j-1)这个两个来得
       
-      //初识状态  f(0,0) = 0;
-      // 这里修改一下初识状态  我们需要知道第一行所有得路径也就是  1
-      // 我们要用的容器 0<i<m 0<j<n
-      vector<vector<int>> result;
-      result.resize(m);
-      vector<int> v;
-      v.resize(n);
-      for(int i = 0; i < m; i++)
-        result[i] = v;
+//       //初识状态  f(0,0) = 0;
+//       // 这里修改一下初识状态  我们需要知道第一行所有得路径也就是  1
+//       // 我们要用的容器 0<i<m 0<j<n
+//       vector<vector<int>> result;
+//       result.resize(m);
+//       vector<int> v;
+//       v.resize(n);
+//       for(int i = 0; i < m; i++)
+//         result[i] = v;
 
       
-      for(int i = 0; i < n; i++)
-      {
-        result[0][i] = 1;
-      }
-      // 开始
-      for(int i = 1 ; i < m; i++)
-      {
-        for(int j = 0; j < n; j++)
-        {
-          if(j == 0)
-            result[i][0] = result[i-1][0];
-          else 
-            result[i][j] = result[i-1][j] + result[i][j-1];
-        }
-      }
-      return result[m-1][n-1];
-    }
-};
+//       for(int i = 0; i < n; i++)
+//       {
+//         result[0][i] = 1;
+//       }
+//       // 开始
+//       for(int i = 1 ; i < m; i++)
+//       {
+//         for(int j = 0; j < n; j++)
+//         {
+//           if(j == 0)
+//             result[i][0] = result[i-1][0];
+//           else 
+//             result[i][j] = result[i-1][j] + result[i][j-1];
+//         }
+//       }
+//       return result[m-1][n-1];
+//     }
+// };
 
 
 //f(i,j) 表示从这个点到最后一行的最小路径和

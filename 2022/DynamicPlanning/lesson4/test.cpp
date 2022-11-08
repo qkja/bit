@@ -4,16 +4,13 @@
  * Date         : 2022-11-01 19:30:40
  * LastEditTime : 2022-11-01 20:35:35
  */
+
+
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
-// 回文字符串分割
-// 状态  f(i)  表示 前 i 个字符的最小分割次数
-// 如何利用 f(i-1) 的结果   我们需要看 所有的情况  
-// 前面的i-1个字符我不管 我们需要看看整体是不是回文串不是+1,是就是0
-// f(i) = 
-//  学会使用具体的情况分析问题
+
 class Solution {
 public:
     /**
@@ -23,16 +20,24 @@ public:
      */
     bool IsReply(const string& str)
     {
-        int left = 0;
-        int right = str.size()-1;
-        while(left < right)
-        {
-            if(str[left] != str[right])
-                return false;
-            left++;
-            right--;
+        // write code here
+        if (str.empty())
+            return false;
+        int len = str.size();
+        vector<vector<bool>> result(len, vector<bool>(len, true));
+
+        // 这里先来初始化
+        for (int i = 0; i < len; i++) {
+            result[i][i] = true;
         }
-        return true;
+
+        // 开始
+        for (int i = len-1-1; i>=0;i--) {
+            for (int j = i + 1; j < len; j++) {
+                result[i][j] = (str[i] == str[j]) && result[i + 1][j - 1];
+            }
+        }
+        return result[0][len - 1];
     }
 
     int minCut(string s) {
@@ -46,7 +51,7 @@ public:
         result[1] = 0;
 
 
-        for (size_t i = 2; i < len+1; i++)
+        for (int i = 2; i < len+1; i++)
         {
             result[i] = i-1; // 先给一最大值
             // 先判断整体
@@ -57,7 +62,7 @@ public:
             }
             // i = 3  j = 1
             // aab
-            for (size_t j = 1; j < i; j++)
+            for (int j = 1; j < i; j++)
             {
 
                 string str = s.substr(j, i-j);
@@ -78,13 +83,87 @@ public:
     }
 };
 
-int main()
-{
-    string str = "aaa";
-    cout << Solution().minCut(str) << endl;
-    return 0;
-}
 
+
+
+
+// 回文字符串分割
+// 状态  f(i)  表示 前 i 个字符的最小分割次数
+// 如何利用 f(i-1) 的结果   我们需要看 所有的情况  
+// 前面的i-1个字符我不管 我们需要看看整体是不是回文串不是+1,是就是0
+// f(i) = 
+//  学会使用具体的情况分析问题
+//class Solution {
+//public:
+//    /**
+//     * 判断回文字符串
+//     * @param s string字符串 
+//     * @return int整型
+//     */
+//    bool IsReply(const string& str)
+//    {
+//        int left = 0;
+//        int right = str.size()-1;
+//        while(left < right)
+//        {
+//            if(str[left] != str[right])
+//                return false;
+//            left++;
+//            right--;
+//        }
+//        return true;
+//    }
+//
+//    int minCut(string s) {
+//        // write code here
+//        if(s.empty())
+//            return -1;
+//        int len = s.size();
+//        vector<int> result;
+//        result.resize(len+1);
+//        result[0] = 0;
+//        result[1] = 0;
+//
+//
+//        for (size_t i = 2; i < len+1; i++)
+//        {
+//            result[i] = i-1; // 先给一最大值
+//            // 先判断整体
+//            if(IsReply(s.substr(0,i)))
+//            {
+//                result[i] = 0;
+//                continue;
+//            }
+//            // i = 3  j = 1
+//            // aab
+//            for (size_t j = 1; j < i; j++)
+//            {
+//
+//                string str = s.substr(j, i-j);
+//                // a        ab
+//                //aa // b
+//                if(IsReply(str))
+//                {
+//                    // 这里是回文
+//                    // 2
+//                    int len = result[j] + 1;
+//                    if(len < result[i])
+//                        result[i] = len;
+//                }
+//            }
+//            
+//        }
+//        return result[len];
+//    }
+//};
+//
+//int main()
+//{
+//    string str = "aaa";
+//    cout << Solution().minCut(str) << endl;
+//    return 0;
+//}
+//
 
 // f(1) = 0 f(0) = 1
 // class Solution {
@@ -196,3 +275,7 @@ int main()
 //         return result[row-1][col-1];
 //     }
 // };
+//int main()
+//{
+//  return 0;
+//}

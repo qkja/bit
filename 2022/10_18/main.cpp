@@ -3,37 +3,16 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-class Solution {
-public:
-    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-      if(nums1.empty() || nums2.empty())
-        return;
-      int i = m - 1;
-      int j = n -1;
-      int desc = nums1.size() - 1;
-
-      while(i >= 0 && j>= 0)
-      {
-        if(nums1[i] <= nums2[j])
-        {
-          nums1[desc--] = nums2[j--];
-        }
-        else 
-        {
-          nums1[desc--] = nums1[i--];
-        }
-      }
-
-      if(i < 0)
-      {
-        for(i = 0; i <= j; i++)
-        {
-          nums1[i] = nums2[i];
-        }
-      }
-
-    }
-};
+int main()
+{
+  std::cout << "PATH:" << getenv("PATH") << endl;
+  std::cout << "MYPATH:" << getenv("MYPATH") << endl;
+  cout << "Hello C++" << endl;
+  cout << "Hello C++" << endl;
+  cout << "Hello C++" << endl;
+  cout << "Hello C++" << endl;
+  cout << "Hello C++" << endl;
+}
 
 
 
@@ -44,6 +23,58 @@ public:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//class Solution {
+//public:
+//    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+//      if(nums1.empty() || nums2.empty())
+//        return;
+//      int i = m - 1;
+//      int j = n -1;
+//      int desc = nums1.size() - 1;
+//
+//      while(i >= 0 && j>= 0)
+//      {
+//        if(nums1[i] <= nums2[j])
+//        {
+//          nums1[desc--] = nums2[j--];
+//        }
+//        else 
+//        {
+//          nums1[desc--] = nums1[i--];
+//        }
+//      }
+//
+//      if(i < 0)
+//      {
+//        for(i = 0; i <= j; i++)
+//        {
+//          nums1[i] = nums2[i];
+//        }
+//      }
+//
+//    }
+//};
+//
 
 //class Solution {
 //public:

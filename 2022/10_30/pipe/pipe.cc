@@ -35,11 +35,13 @@ int main()
         {
             // 清空
 
+            // 当子进程在写入数据的时候  
             cout << "时间戳 " << (uint64_t)time(nullptr) << endl;
             //cout << rand() << endl;
             memset(buffer, '\0', sizeof(buffer));
             //ssize_t read(int fd, void *buf, size_t count);
             // 返回值  读取的字节数
+            // 没有内容就在这阻塞 具有顺序性
             ssize_t s = read(pipefd[0], buffer, sizeof(buffer)-1);
             if(s > 0)
             {
@@ -80,7 +82,6 @@ int main()
             sleep(2);
             cnt++;
         }
-
         // 关闭  
         close(pipefd[1]);
         cout << "父进程写完了" << endl;

@@ -12,161 +12,180 @@
 
 using namespace std;
 
-typedef void (*functor)(); // 函数指针
-vector<functor> functors;  // 方法集合
-unordered_map<uint32_t, string> info;
-//  pid  fd
-typedef std::pair<int32_t, int32_t> elem;
 
-// 定义子进程的个数
-int processNum = 5;
 
-void f1()
-{
-    cout << "这是一个处理日志的任务,执行进程的pid ["
-         << getpid() << "] 执行时间 [" << time(nullptr) << "]\n" << endl;
-}
 
-void f2()
-{
-    cout << "这是一个备份数据的任务,执行进程的pid ["
-         << getpid() << "] 执行时间 [" << time(nullptr) << "]\n" << endl;
-}
 
-void f3()
-{
-    cout << "这是一个处理网络链接的任务,执行进程的pid ["
-         << getpid() << "] 执行时间 [" << time(nullptr) << "]\n" << endl;
-}
 
-// 加载方法
-void LoadFunctor()
-{
-    // 加载
-    info.insert(make_pair(functors.size(), "处理日志"));
-    functors.push_back(f1);
 
-    info.insert(make_pair(functors.size(), "备份数据"));
-    functors.push_back(f2);
 
-    info.insert(make_pair(functors.size(), "处理网络"));
-    functors.push_back(f3);
-}
 
-void Work(int fd)
-{
-    cout << "进程pid [" << getpid() << "] 开始工作" << endl;
-    while (true)
-    {
-        uint32_t code = 0;
-        // 什么时候会读到 0
-        // 阻塞到这了
-        ssize_t s = read(fd, &code, sizeof(uint32_t));
-        if (s == 0)
-        {
-            break;
-        }
-        else if (s == sizeof(uint32_t))
-        {
-            if (code < functors.size())
-            {
-                functors[code]();
-            }
-            else
-            {
-                cout << "bug" << endl;
-            }
-        }
-        else
-        {
-            close(fd);
-            assert(false);
-        }
-    }
 
-    cout << "进程pid [" << getpid() << "] 结束工作" << endl;
-}
 
-void SendTask(const vector<elem> &assignMap)
-{
-    srand((long long)time(nullptr));
-    int cnt = 0;
-    while (cnt < 3)
-    {
-        cnt++;
-        // 选择一个进程
-        sleep(1);
-        int pick = rand() % assignMap.size();
 
-        // 选择一个任务
-        int task = rand() % functors.size();
 
-        // 把任务给一个指定的进程
-        // cout << "父进程指派  " << info[task] << "  给进程 pid  "
-        //      << assignMap[pick].first << "   编号是 " << pick << endl;
-        write(assignMap[pick].second, &task, sizeof(task));
 
-        // 打印提示信息
-        cout << "父进程指派  " << info[task] << "  给进程 pid  "
-             << assignMap[pick].first << "   进程编号是 " << pick << endl;
-        //fflush(stdout);
-         //sleep(1);
-        //sleep(10);
-    }
 
-    // 指派任务结束后 ,我们需要关闭 写端
-    for (int i = 0; i < processNum; i++)
-    {
-        close(assignMap[i].second);
-    }
+
+
+//  兄弟进程如何通信   要知道 这里打开时 2个管道文件
+//
+
+// typedef void (*functor)(); // 函数指针
+// vector<functor> functors;  // 方法集合
+// unordered_map<uint32_t, string> info;
+// //  pid  fd
+// typedef std::pair<int32_t, int32_t> elem;
+
+// // 定义子进程的个数
+// int processNum = 5;
+
+// void f1()
+// {
+//     cout << "这是一个处理日志的任务,执行进程的pid ["
+//          << getpid() << "] 执行时间 [" << time(nullptr) << "]\n" << endl;
+// }
+
+// void f2()
+// {
+//     cout << "这是一个备份数据的任务,执行进程的pid ["
+//          << getpid() << "] 执行时间 [" << time(nullptr) << "]\n" << endl;
+// }
+
+// void f3()
+// {
+//     cout << "这是一个处理网络链接的任务,执行进程的pid ["
+//          << getpid() << "] 执行时间 [" << time(nullptr) << "]\n" << endl;
+// }
+
+// // 加载方法
+// void LoadFunctor()
+// {
+//     // 加载
+//     info.insert(make_pair(functors.size(), "处理日志"));
+//     functors.push_back(f1);
+
+//     info.insert(make_pair(functors.size(), "备份数据"));
+//     functors.push_back(f2);
+
+//     info.insert(make_pair(functors.size(), "处理网络"));
+//     functors.push_back(f3);
+// }
+
+// void Work(int fd)
+// {
+//     cout << "进程pid [" << getpid() << "] 开始工作" << endl;
+//     while (true)
+//     {
+//         uint32_t code = 0;
+//         // 什么时候会读到 0
+//         // 阻塞到这了
+//         ssize_t s = read(fd, &code, sizeof(uint32_t));
+//         if (s == 0)
+//         {
+//             break;
+//         }
+//         else if (s == sizeof(uint32_t))
+//         {
+//             if (code < functors.size())
+//             {
+//                 functors[code]();
+//             }
+//             else
+//             {
+//                 cout << "bug" << endl;
+//             }
+//         }
+//         else
+//         {
+//             close(fd);
+//             assert(false);
+//         }
+//     }
+
+//     cout << "进程pid [" << getpid() << "] 结束工作" << endl;
+// }
+
+// void SendTask(const vector<elem> &assignMap)
+// {
+//     srand((long long)time(nullptr));
+//     int cnt = 0;
+//     while (cnt < 3)
+//     {
+//         cnt++;
+//         // 选择一个进程
+//         sleep(1);
+//         int pick = rand() % assignMap.size();
+
+//         // 选择一个任务
+//         int task = rand() % functors.size();
+
+//         // 把任务给一个指定的进程
+//         // cout << "父进程指派  " << info[task] << "  给进程 pid  "
+//         //      << assignMap[pick].first << "   编号是 " << pick << endl;
+//         write(assignMap[pick].second, &task, sizeof(task));
+
+//         // 打印提示信息
+//         cout << "父进程指派  " << info[task] << "  给进程 pid  "
+//              << assignMap[pick].first << "   进程编号是 " << pick << endl;
+//         //fflush(stdout);
+//          //sleep(1);
+//         //sleep(10);
+//     }
+
+//     // 指派任务结束后 ,我们需要关闭 写端
+//     for (int i = 0; i < processNum; i++)
+//     {
+//         close(assignMap[i].second);
+//     }
     
-}
+// }
 
-int main()
-{
+// int main()
+// {
 
-    vector<elem> assignMap;
-    LoadFunctor();
-    for (size_t i = 0; i < processNum; i++)
-    {
-        int pipeFd[2] = {0};
-        pipe(pipeFd);
+//     vector<elem> assignMap;
+//     LoadFunctor();
+//     for (size_t i = 0; i < processNum; i++)
+//     {
+//         int pipeFd[2] = {0};
+//         pipe(pipeFd);
 
-        pid_t id = fork();
-        if (id == 0)
-        {
-            // 只有子进程会进入到了
-            close(pipeFd[1]);
+//         pid_t id = fork();
+//         if (id == 0)
+//         {
+//             // 只有子进程会进入到了
+//             close(pipeFd[1]);
 
-            Work(pipeFd[0]);
+//             Work(pipeFd[0]);
 
-            close(pipeFd[0]);
-            exit(0);
-        }
-        // 只有父进程
-        // 如何给子进程指派任务
-        // 需要保存 进程 和 对应的文件描述符
-        close(pipeFd[0]);
-        elem e(id, pipeFd[1]);
-        assignMap.push_back(e);
-    }
+//             close(pipeFd[0]);
+//             exit(0);
+//         }
+//         // 只有父进程
+//         // 如何给子进程指派任务
+//         // 需要保存 进程 和 对应的文件描述符
+//         close(pipeFd[0]);
+//         elem e(id, pipeFd[1]);
+//         assignMap.push_back(e);
+//     }
 
-    // 到这里一定 是父进程
-    SendTask(assignMap);
+//     // 到这里一定 是父进程
+//     SendTask(assignMap);
 
-    // 这一步肯定是指派任务结束了
-    for (int i = 0; i < processNum; i++)
-    {
-        if (waitpid(assignMap[i].first, nullptr, 0))
-        {
-            cout << "等待成功 pid" << assignMap[i].first
-                 << "ppid " << getpid()
-                 << "  编号   " << i << endl;
-            //close(assignMap[i].second);
-        }
-    }
-    return 0;
-}
+//     // 这一步肯定是指派任务结束了
+//     for (int i = 0; i < processNum; i++)
+//     {
+//         if (waitpid(assignMap[i].first, nullptr, 0))
+//         {
+//             cout << "等待成功 pid" << assignMap[i].first
+//                  << "ppid " << getpid()
+//                  << "  编号   " << i << endl;
+//             //close(assignMap[i].second);
+//         }
+//     }
+//     return 0;
+// }
 
 // 测试多进程是不是打开不同的描述符
 // int main()
