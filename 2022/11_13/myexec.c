@@ -11,33 +11,59 @@
 
 int main()
 {
-  pid_t id = fork();
-  if(id == 0)
-  {
-    // child
-    
-    //execl("./mycmd", "mycmd",NULL);
-    char* env[] = {
-     (char*) "MYPATH=YouCanSeeME!!"
-    };
-    execle("./mycmd", "mycmd", NULL,
-        env); // 手动导入环境变量
-    exit(1); // 只要子进程执行这个语句,替换一定失败了
-  }
-
-  // 到这里 一定是父进程  (如果替换成功的话)
-  int status = 0;
-  pid_t ret = waitpid(id, &status, 0);  // 阻塞等待
-
-  sleep(3);
-
-  if(ret == id)
-  {
-    printf("父进程等待成功\n");
-  }
-
+  execl("/usr/bin/ls", "ls", "-a", "-l", NULL);
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//int main()
+//{
+//  pid_t id = fork();
+//  if(id == 0)
+//  {
+//    // child
+//    
+//    //execl("./mycmd", "mycmd",NULL);
+//    char* env[] = {
+//     (char*) "MYPATH=YouCanSeeME!!"
+//    };
+//    execle("./mycmd", "mycmd", NULL,
+//        env); // 手动导入环境变量
+//    exit(1); // 只要子进程执行这个语句,替换一定失败了
+//  }
+//
+//  // 到这里 一定是父进程  (如果替换成功的话)
+//  int status = 0;
+//  pid_t ret = waitpid(id, &status, 0);  // 阻塞等待
+//
+//  sleep(3);
+//
+//  if(ret == id)
+//  {
+//    printf("父进程等待成功\n");
+//  }
+//
+//  return 0;
+//}
 
 
 
