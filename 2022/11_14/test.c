@@ -16,20 +16,13 @@
 
 int main()
 {
-  umask(0);
+  
+  printf("hello printf"); // stdout 中写
 
-  //close(0);
-  //close(2);
-  close(1);
-  int fd = open("log.txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  if(fd < 0)
-  {
-    printf("%s\n", strerror(errno));
-    exit(1);
-  }
-  printf("fd %d\n", fd);
-  fflush(stdout);
-  close(fd);
+  const char* msg = "hello write";
+
+  write(1, msg, strlen(msg));
+  sleep(5);
 
 
 
@@ -42,31 +35,91 @@ int main()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //int fd = open("log.txt", O_RDONLY | O_CREAT, 0666);
+  //if(fd < 0)
+  //{
+  //  printf("%s\n", strerror(errno));
+  //  exit(1);
+  //}
+  //int ret = dup2(fd, 0);
+  //if(ret >= 0)
+  //{
+  //  close(fd);
+  //}
+
+  //char buffer[64];
+
+  //while(fgets(buffer, sizeof(buffer), stdin) != NULL)
+  //{
+  //  printf("%s\n",buffer);
+  //}
+
+
+  //int ret = dup2(fd, 1);
+  //int ret = dup2(fd, 1);
+
+  //int fd = open("log.txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  //int fd = open("log.txt", O_WRONLY | O_CREAT | O_APPEND, 0666);
+
+  //if(dup2(fd,1) > 0)
+  //{
+  //  close(1);
+  //}
+  ////dup2(fd, 1); // 这么传  
+
+
+
+
+
+
+
+  //printf("ret %d\n", ret);
+  //printf("打开文件成功 fd %d\n",fd);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //fprintf(stdout, "%s %d\n","打开文件成功",fd);
+
+  //fflush(stdout);
+  //close(fd);
 
 
   //printf("stdin %d\n", stdin->_fileno);
   //printf("stdout %d\n", stdout->_fileno);
   //printf("stderr %d\n", stderr->_fileno);
 
-
-
-
-
-
-
-
-
-
-
-
   //const char* msg = "123456\n";
 
   //write(1, msg, strlen(msg));
   //write(2, msg, strlen(msg));
-
-
-
-
 
 
 //int main()
