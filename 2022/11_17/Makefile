@@ -1,10 +1,10 @@
 .PHONY:all
-all:clientFifo serverFifo 
+all:IpcShmCli IpcShmSer
 
-clientFifo:clientFifo.cpp
+IpcShmCli:IpcShmCli.cc
 	g++ -std=c++11 -o $@ $^
-serverFifo:serverFifo.cpp
+IpcShmSer:IpcShmSer.cc
 	g++ -std=c++11 -o $@ $^
 .PHONY:clean
 clean:
-	rm clientFifo serverFifo
+	rm -f IpcShmCli IpcShmSer
