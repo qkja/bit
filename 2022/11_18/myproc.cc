@@ -16,30 +16,40 @@
 #include <string>
 using namespace std;
 
-void handler(int signo)
-{
-  cout << "我是一个进程 pid " << getpid() << ",刚刚获取了一个信号: " << signo << endl;
-}
-
 int main()
 {
-  pid_t id = fork();
-  if (id == 0)
-  {
-    int a = 0;
-    a/=0;
-    exit(1);
-  }
-  int status = 0;
-  pid_t ret = waitpid(id, &status, 0);
-  if (ret > 0)
-  {
-    cout << "推出码     " << ((status >> 8) & 0xFF) << endl;
-    cout << "core dump  " << ((status >> 7) & 0x1) << endl;
-    cout << "退出信号   " << ((status)&0x7F) << endl;
-  }
+  cout << "begin ..." << endl;
+  int* p = nullptr;
+  *p = 1000;
+  cout << "end ..." << endl;
   return 0;
 }
+
+// void handler(int signo)
+// {
+//   cout << "我是一个进程 pid " << getpid() << ",刚刚获取了一个信号: " << signo << endl;
+// }
+
+// int main()
+// {
+//   pid_t id = fork();
+//   if (id == 0)
+//   {
+//     int a = 0;
+//     a/=0;
+//     exit(1);
+//   }
+//   int status = 0;
+//   pid_t ret = waitpid(id, &status, 0);
+//   if (ret > 0)
+//   {
+//     cout << id << endl;
+//     cout << "推出码     " << ((status >> 8) & 0xFF) << endl;
+//     cout << "core dump  " << ((status >> 7) & 0x1) << endl;
+//     cout << "退出信号   " << ((status)&0x7F) << endl;
+//   }
+//   return 0;
+// }
 
 
 // int main()

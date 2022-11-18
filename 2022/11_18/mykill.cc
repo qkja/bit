@@ -23,18 +23,18 @@ void handler(int signo)
   exit(1);
 }
 
-int main()
-{
-  alarm(1); // 一秒之后 产生一个信号  会发送  一个SIGALRM
-  signal(SIGALRM, handler); // 这里只是 设置
+// int main()
+// {
+//   alarm(1); // 一秒之后 产生一个信号  会发送  一个SIGALRM
+//   signal(SIGALRM, handler); // 这里只是 设置
 
-  while (1)
-  {
-    cnt++;
-  }
+//   while (1)
+//   {
+//     cnt++;
+//   }
 
-  return 0;
-}
+//   return 0;
+// }
 
 // int main()
 // {

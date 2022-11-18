@@ -13,20 +13,37 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
-
 int main()
 {
-  
+
   printf("hello printf"); // stdout 中写
 
-  const char* msg = "hello write";
-
+  const char* msg = "hello write";                        
+                                          
   write(1, msg, strlen(msg));
   sleep(5);
 
 
 
 
+//int main()
+//{
+//
+//  const char* str1 = "hello printf\n";
+//  const char* str2 = "hello fprintf\n";
+//  const char* str3 = "hello fputs\n";
+//  const char* str4 = "hello write\n";
+//
+//
+//  printf("%s",str1);
+//  fprintf(stdout, "%s", str2);
+//  fputs(str3, stdout);
+//
+//  write(1, str4, strlen(str4));
+//
+//  fork();
+//
+//
 
 
 
@@ -38,13 +55,14 @@ int main()
 
 
 
+  
+  //printf("hello printf"); // stdout 中写
 
+  //const char* msg = "hello write";
 
-
-
-
-
-
+  //write(1, msg, strlen(msg));
+  //close(1);
+  //sleep(5);
 
 
 

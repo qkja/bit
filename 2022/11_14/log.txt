@@ -1,6 +1,7 @@
-ret 1
-打开文件成功 fd 3
-ret 1
-打开文件成功 fd 3
-ret 1
-打开文件成功 fd 3
+hello write
+hello printf
+hello fprintf
+hello fputs
+hello printf
+hello fprintf
+hello fputs
