@@ -15,13 +15,19 @@
 
 using namespace std;
 
-int cnt = 0;
-void handler(int signo)
+
+int main()
 {
-  cout << "我是一个进程,刚刚获取了一个信号: " << signo << endl;
-  cout << "cnt : " << cnt << endl;;
-  exit(1);
+ sigset_t;
 }
+
+// int cnt = 0;
+// void handler(int signo)
+// {
+//   cout << "我是一个进程,刚刚获取了一个信号: " << signo << endl;
+//   cout << "cnt : " << cnt << endl;;
+//   exit(1);
+// }
 
 // int main()
 // {

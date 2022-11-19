@@ -15,15 +15,21 @@
 #include <stdlib.h>
 #include <string>
 using namespace std;
-
 int main()
 {
-  cout << "begin ..." << endl;
-  int* p = nullptr;
-  *p = 1000;
-  cout << "end ..." << endl;
+  //sigprocmask();
   return 0;
 }
+
+
+// int main()
+// {
+//   cout << "begin ..." << endl;
+//   int* p = nullptr;
+//   *p = 1000;
+//   cout << "end ..." << endl;
+//   return 0;
+// }
 
 // void handler(int signo)
 // {
