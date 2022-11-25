@@ -4,13 +4,60 @@
  * Date         : 2022-11-24 22:50:06
  * LastEditTime : 2022-11-25 14:00:40
  */
-// linux 是存在线程的,只不过我们不谈
+// linux 是存在线程的,只不过我们不谈    
 // 里面都是什么东西  是寄存器
 #include <pthread.h>
 #include <iostream>
 #include <unistd.h>
+#include <string>
 
 using namespace std;
+
+// 线程同步
+// 线程互斥是对的,但是它合理吗(在任何地方)
+// 食堂大妈给优先级更高的打饭,这里合理吗   你抢到是你的  你只能饿死
+// 食堂大妈错了吗, 但是这里不合理
+// 图书馆的自习室只能一个人, 有一个钥匙,可以打开,你很早就跑过了
+// 你人不在把钥匙拿走了,别人进不去,这里合理吗   
+// 不能颓废,你坚持,其他人都在等者,你的速度快,又把钥匙拿了出来,别人不揍死你
+// 互斥是对的,但是不一定合理   这会导致饥饿问题      记住这个是有可能
+// 我要加一个游戏规则,只要你进去了,可以,我们不打扰,但是你出来了,好了,去后面排队
+// 等待其他人用过之后,才轮到你   这个特性叫做  同步
+// 早保证临界资源安全的前体下,让线程访问某种资源具有一个的顺序性
+// 互斥保证安全
+// 同步保证顺序(不一定互斥)
+//
+// 为何    1. 防止饥饿 2. 线程协同:w
+
+
+
+
+
+//// 一把锁会不会有死锁问题  -- 有的  脑子抽了,自己也会把自己绊倒
+//pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+//int cnt = 100;
+//
+//void *startRoutine(void *args)
+//{
+//  string str = (char *)args;
+//  while (true)
+//  {
+//    //pthread_mutex_lock(&mutex);
+//    pthread_mutex_lock(&mutex);
+//    cout << "count: " << cnt-- << endl;
+//    pthread_mutex_unlock(&mutex);
+//    sleep(1);
+//  }
+//}
+//
+//int main()
+//{
+//  pthread_t tid;
+//  pthread_create(&tid, nullptr, startRoutine, (void *)"thread");
+//
+//  pthread_join(tid, nullptr);
+//  return 0;
+//}
 
 // int main()
 // {
@@ -112,8 +159,6 @@ using namespace std;
 
 // 线程分离
 
-
-
 /////////////////////////////////////////////////
 
 // 锁的原理 是如何实现的  这里我们谈最常规的
@@ -131,5 +176,5 @@ using namespace std;
 
 // 这里是暂时听懂的
 
-// 1这个就像是  令牌一般   
-// 
+// 1这个就像是  令牌一般
+//
