@@ -11,27 +11,77 @@ using namespace std;
 
 void *startRoutine(void *args)
 {
-  int cnt = 10;
-  while (true)
-  {
-    cout << "我是一个新线程 cnt " << cnt << endl;
-    sleep(1);
-    if (cnt == 0)
-    {
-      int* p = nullptr;
-      *p = 20;
-    }
-    cnt--;
-  }
-}
+  cout << pthread_self() << endl;
 
+  return (void*)10;  // 这个是 给   join的
+}
 
 int main()
 {
 
-  cout << sizeof(void*) <<endl;
   return 0;
 }
+
+// void *startRoutine(void *args)
+// {
+//   cout << pthread_self() << endl;
+
+//   return (void*)10;  // 这个是 给   join的
+// }
+
+// int main()
+// {
+
+//   pthread_t tid = 0;
+//   pthread_create(&tid, nullptr, startRoutine, (void *)"thread1");
+//   pthread_join(tid, nullptr);
+//   cout << tid << endl;
+//   return 0;
+// }
+
+// void *startRoutine(void *args)
+// {
+//   int cnt = 10;
+//   while (true)
+//   {
+//     cout << "我是一个新线程 cnt " << cnt << endl;
+//     sleep(1);
+//     if (cnt == 0)
+//     {
+//       int* p = nullptr;
+//       *p = 20;
+//     }
+//     cnt--;
+//   }
+//   return (void*)10;  // 这个是 给   join的
+// }
+
+// int main()
+// {
+
+//   pthread_t tid = 0;
+//   pthread_create(&tid, nullptr, startRoutine, (void *)"thread1");
+
+//   pthread_join(tid, nullptr);
+
+//   cout << "线程推出了" << endl;
+//   sleep(10);
+//   while (true)
+//   {
+//     cout << "主线程正在运行..." << endl;
+//     sleep(1);
+//   }
+
+//   return 0;
+// }
+
+
+
+// int main()
+// {
+//   cout << sizeof(void*) <<endl;  // sizeof是编译的时候起效
+//   return 0;
+// }
 
 // int main()
 // {

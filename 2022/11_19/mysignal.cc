@@ -7,16 +7,16 @@
 #include <iostream>
 using namespace std;
 
-int main()
-{
-  const int a = 10;
-  cout << a << endl;
-  int* p = (int*)&a;
-  *p = 100;
-  cout << a << endl;
-  cout << *p << endl;
-  return 0;
-}
+// int main()
+// {
+//   const int a = 10;
+//   cout << a << endl;
+//   int* p = (int*)&a;
+//   *p = 100;
+//   cout << a << endl;
+//   cout << *p << endl;
+//   return 0;
+// }
 
 /*
 子进程发送   17 好信号 退出时(暂停,继续运行时  暂停和  s态是一样吗)
@@ -24,7 +24,6 @@ int main()
 
 // 如何赞成 暂停进程
 // 继续  18
-
 
 
 // #include <signal.h>
