@@ -69,7 +69,7 @@ public:
       struct sockaddr_in peer;
       socklen_t len = sizeof(peer);
       bzero(&peer, len);
-      ssize_t s = recvfrom(_sockfd, inBuffer, sizeof(inBuffer) - 1, 0, (struct sockaddr *)&peer, &len);
+      ssize_t s = recvfrom(_sockfd, inBuffer, sizeof(inBuffer) - 1, 0,(struct sockaddr *)&peer, &len);
       sleep(1);
     }
     // while (true)
