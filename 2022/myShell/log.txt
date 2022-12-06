@@ -2,7 +2,3 @@ log.txt
 Makefile
 myshell
 myshell.c
-log.txt
-Makefile
-myshell
-myshell.c

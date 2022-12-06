@@ -65,7 +65,8 @@ void CheckDir(char *commands)
                 g_redir_filename = start;
                 break;
             }
-            else{
+            else
+            {
                 //ls -a -l > log.txt -- 输出重定向
                 *start = '\0';
                 start++;
@@ -89,6 +90,7 @@ void CheckDir(char *commands)
         {
             start++;
         }
+
     }
 }
 
@@ -132,6 +134,12 @@ int main()
         //}
     
         // 4. TODO, 编写后面的逻辑, 内建命令
+
+
+
+        
+
+
         if(strcmp(command_args[0], "cd") == 0 && command_args[1] != NULL)
         {
             ChangeDir(command_args[1]); //让调用方进行路径切换, 父进程
@@ -151,20 +159,21 @@ int main()
         if(id == 0)
         {
             int fd = -1;
+            int flags = 0666;
             switch(g_redir_flag)
             {
                 case NONE_REDIR:
                     break;
                 case INPUT_REDIR:
-                    fd = open(g_redir_filename, O_RDONLY);
+                    fd = open(g_redir_filename, O_RDONLY, flags);
                     dup2(fd, 0);
                     break;
                 case OUTPUT_REDIR:
-                    fd = open(g_redir_filename, O_WRONLY | O_CREAT | O_TRUNC);
+                    fd = open(g_redir_filename, O_WRONLY | O_CREAT | O_TRUNC, flags);
                     dup2(fd, 1);
                     break;
                 case APPEND_REDIR:
-                    fd = open(g_redir_filename, O_WRONLY | O_CREAT | O_APPEND);
+                    fd = open(g_redir_filename, O_WRONLY | O_CREAT | O_APPEND, flags);
                     dup2(fd, 1);
                     break;
                 default:
