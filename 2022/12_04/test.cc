@@ -11,6 +11,25 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <string>
+
+int main()
+{
+    umask(0);
+
+    close(1);
+    int fd = open("log.txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if (fd < 0)
+    {
+        printf("%s\n", strerror(errno));
+        exit(1);
+    }
+    printf("fd %d\n", fd);
+
+    close(fd);
+    return 0;
+}
+
 // void read(struct file *filep, int fd....)
 // {
 //   // 逻辑代码

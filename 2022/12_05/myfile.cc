@@ -118,17 +118,73 @@ void my_fwrite(MyFILE *pf, char *buffer, int len)
   {
   }
 }
+
 int main()
 {
 
   MyFILE *pf = my_fopen("log.txt", "w");
-  char *s = "aaaaaaa\n";
+  if (pf == NULL)
+  {
+    printf("my_fopen errno\n");
+    return 1;
+  }
+  char *s = "hello my file\n";
   my_fwrite(pf, s, strlen(s));
-  fork();
+  printf("消息已经刷新");
+
+  char *ss = "hello my file 1";
+  my_fwrite(pf, ss, strlen(ss));
+  printf("写了一个不满足刷新的字符串\n");
+  sleep(5);
+  
+  char *sss = "hello my file 2";
+  my_fwrite(pf, sss, strlen(sss));
+  printf("写了一个不满足刷新的字符串\n");
+  sleep(5);
+
   my_fclose(pf);
 
   return 0;
 }
+
+
+
+// #include <iostream>
+// #include <stdio.h>
+// using namespace std;
+
+// int main()
+// {
+
+//   // stdout
+//   printf("hello printf 1\n"); // 1
+//   fprintf(stdout, "hello fprintf 1\n");
+//   fputs("hello fputs 1\n", stdout);
+
+//   // stderr
+
+//   fprintf(stderr, "hello fprintf 2\n");
+//   fputs("hello fputs 2\n", stderr);
+//   perror("hello perror 2");
+
+//   // cout
+//   cout << "hello cout 1" << endl;
+
+//   // cerr
+//   cerr << "hello cerr 2" << endl;
+//   return 0;
+// }
+// int main()
+// {
+
+//   MyFILE *pf = my_fopen("log.txt", "w");
+//   char *s = "aaaaaaa\n";
+//   my_fwrite(pf, s, strlen(s));
+//   fork();
+//   my_fclose(pf);
+
+//   return 0;
+// }
 // int main()
 // {
 
