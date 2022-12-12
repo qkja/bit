@@ -67,7 +67,7 @@ int main()
     {
       write(pipefd[1], msg.c_str(), msg.size());
       cnt++;
-      sleep(1);
+      sleep(2);
     }
     cout << "父进程已经接完了" << endl;
     close(pipefd[1]);
