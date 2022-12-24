@@ -8,15 +8,19 @@ pthread_cond_t cond;
 // 定义一个互斥锁
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+// 定义一个全局退出变量
+volatile bool quit = false;
 void *waitCommand(void *args)
 {
-  while (true)
+  while (!quit)
   {
     // 让所有的线程等待被唤醒 注意锁的使用还没开始
     // 所有的线程都会在这里等着,给我排队.等着一个一个被叫醒
     pthread_cond_wait(&cond, &mutex);
     cout << "thread id  " << pthread_self() << "  running" << endl;
   }
+
+  cout << "thread id  " << pthread_self() << "  end" << endl;
 }
 
 int main()
@@ -43,10 +47,21 @@ int main()
     }
     else
     {
+      quit = true;
       break;
     }
     sleep(1);
   }
+
+  // 退出的时候 吧所有的线程取消
+  // 2.先唤醒才取消 有问题
+  pthread_cond_broadcast(&cond);
+  pthread_cancel(t1);
+  pthread_cancel(t2);
+  pthread_cancel(t3);
+
+  // 1. 先取消在唤醒 有问题
+  //pthread_cond_broadcast(&cond);
 
   pthread_join(t1, nullptr);
   pthread_join(t2, nullptr);
