@@ -41,7 +41,7 @@ public:
     // 解锁
 
     lockQueue();
-    if (isFull()) // 小bug
+    while (isFull()) // 小bug
     {
       // 阻塞等待,等待被唤醒
       proBlockWait();
@@ -55,7 +55,7 @@ public:
   }
   // 消费接口
   // void pop(T *out)
-  const T pop()
+  T pop()
   {
     // 加锁
     // 消费 -> 阻塞队列是否为空
@@ -64,7 +64,7 @@ public:
     // 解锁
 
     lockQueue();
-    if (isEmpty())
+    while (isEmpty())
     {
       conBlockWait();
     }

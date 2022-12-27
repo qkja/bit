@@ -63,6 +63,13 @@ public:
     return run();
   }
 
+  void get(int *one, int *two, char *op)
+  {
+    *one = _oneElem;
+    *two = _twoElem;
+    *op = _operator;
+  }
+
 private:
   int _oneElem;
   int _twoElem;
