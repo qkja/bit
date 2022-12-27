@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include "Log.hpp"
+#include "log.hpp"
 
 #endif
 using std::queue;
@@ -16,13 +17,8 @@ const int gThreadNum = 5;
 template <class T>
 class ThreadPool
 {
+
 public:
-  ThreadPool(int num = gThreadNum)
-      : _threadNum(num), _isStart(false)
-  {
-    pthread_mutex_init(&_mutex, nullptr);
-    pthread_cond_init(&_cond, nullptr);
-  }
   ~ThreadPool()
   {
     pthread_mutex_destroy(&_mutex);
@@ -30,6 +26,22 @@ public:
   }
 
 public:
+  static ThreadPool<T> *getInstance()
+  {
+    static Mutex m;
+    if (instance == nullptr)
+    {
+      Lock_GUARD l(&m);
+      // 有线程安全问题 -- 可以加锁解决
+      if (instance == nullptr) // 单例不存在
+      {
+        instance = new ThreadPool<T>();
+      }
+      // 出了代码块就是自动解锁
+    }
+
+    return instance;
+  }
   static void *threadRoutine(void *args) // 主要是 this指针
   {
     pthread_detach(pthread_self());
@@ -81,6 +93,16 @@ public:
   }
 
 private:
+  ThreadPool(int num = gThreadNum)
+      : _threadNum(num), _isStart(false)
+  {
+    pthread_mutex_init(&_mutex, nullptr);
+    pthread_cond_init(&_cond, nullptr);
+  }
+
+  ThreadPool(const ThreadPool<T> &t) = delete;
+  ThreadPool<T> &operator=(const ThreadPool<T> &t) = delete;
+
   void choiceThreadForHandler()
   {
     pthread_cond_signal(&_cond);
@@ -114,4 +136,9 @@ private:
   queue<T> _taskQueue;
   pthread_mutex_t _mutex;
   pthread_cond_t _cond;
+
+  static ThreadPool<T> *instance;
 };
+
+template <class T>
+ThreadPool<T> *ThreadPool<T>::instance = nullptr;

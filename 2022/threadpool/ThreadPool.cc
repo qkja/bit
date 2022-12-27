@@ -18,7 +18,8 @@ int main()
   const string str = "+-*/%";
 
   // unique_ptr<ThreadPool<int>> tp(new ThreadPool<int>());
-  unique_ptr<ThreadPool<Task>> tp(new ThreadPool<Task>());
+  //unique_ptr<ThreadPool<Task>> tp(new ThreadPool<Task>());
+  unique_ptr<ThreadPool<Task>> tp(ThreadPool<Task>::getInstance());
   tp->start();
   srand((unsigned long)time(nullptr) ^ getpid() ^ pthread_self());
 
