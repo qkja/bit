@@ -5,6 +5,7 @@
 #include <queue>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/prctl.h>
 #include <unistd.h>
 #include <assert.h>
 #include "Log.hpp"
@@ -44,6 +45,8 @@ public:
   }
   static void *threadRoutine(void *args) // 主要是 this指针
   {
+    prctl(PR_SET_NAME, "follower");
+
     pthread_detach(pthread_self());
 
     ThreadPool *tp = (ThreadPool *)args;

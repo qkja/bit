@@ -15,6 +15,8 @@ using namespace std;
 
 int main()
 {
+  prctl(PR_SET_NAME, "master");
+
   const string str = "+-*/%";
 
   // unique_ptr<ThreadPool<int>> tp(new ThreadPool<int>());
