@@ -6,48 +6,125 @@
 #include <errno.h>
 #include "log.hpp"
 using namespace std;
-pthread_mutex_t mutexA = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutexB = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+int cnt = 100;
 void *callback1(void *args)
 {
-  pthread_mutex_lock(&mutexA);
-  sleep(1);
 
-  pthread_mutex_lock(&mutexB);
   while (1)
   {
-    cout << "我是线程1" << std::endl;
+    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&mutex); // 脑子抽了
+    cout << "count " << cnt-- << std::endl;
+    pthread_mutex_unlock(&mutex);
+
     sleep(1);
   }
-
-  pthread_mutex_unlock(&mutexA);
-  pthread_mutex_unlock(&mutexB);
 }
-void *callback2(void *args)
-{
-  pthread_mutex_lock(&mutexB);
-  sleep(1);
 
-  pthread_mutex_lock(&mutexA);
-  while (1)
-  {
-    cout << "我是线程2" << std::endl;
-    sleep(1);
-  }
-
-  pthread_mutex_unlock(&mutexA);
-  pthread_mutex_unlock(&mutexB);
-}
 int main()
 {
-  pthread_t t1, t2;
+  pthread_t t1;
   pthread_create(&t1, nullptr, callback1, (void *)"thread1");
-  pthread_create(&t1, nullptr, callback2, (void *)"thread1");
-
   pthread_join(t1, nullptr);
-  pthread_join(t2, nullptr);
   return 0;
 }
+// int tickets = 1000;
+// Mutex mutex;
+
+// bool getTickets()
+// {
+//   bool ret = false;
+//   Lock_GUARD l(&mutex); // 完成加锁  函数退出后自动析构解锁
+
+//   if (tickets > 0)
+//   {
+//     usleep(100000);
+//     cout << "thread  " << pthread_self() << " 抢到了票, 票的编号: " << tickets << endl;
+//     tickets--;
+//     ret = true;
+//   }
+//   return ret;
+// }
+
+// void *startRoutine(void *args)
+// {
+//   char *name = (char *)args;
+//   while (true)
+//   {
+//     if (!getTickets())
+//     {
+//       break;
+//     }
+//     cout << name << "获得票成功" << endl;
+//     sleep(1);
+//   }
+// }
+
+// int main()
+// {
+
+//   pthread_t tid1;
+//   pthread_t tid2;
+//   pthread_t tid3;
+//   pthread_t tid4;
+
+//   pthread_create(&tid1, nullptr, startRoutine, (void *)"thread1");
+//   pthread_create(&tid2, nullptr, startRoutine, (void *)"thread2");
+//   pthread_create(&tid3, nullptr, startRoutine, (void *)"thread3");
+//   pthread_create(&tid4, nullptr, startRoutine, (void *)"thread4");
+
+//   pthread_join(tid1, nullptr);
+//   pthread_join(tid2, nullptr);
+//   pthread_join(tid3, nullptr);
+//   pthread_join(tid4, nullptr);
+
+//   return 0;
+// }
+
+// pthread_mutex_t mutexA = PTHREAD_MUTEX_INITIALIZER;
+// pthread_mutex_t mutexB = PTHREAD_MUTEX_INITIALIZER;
+// void *callback1(void *args)
+// {
+//   pthread_mutex_lock(&mutexA);
+//   sleep(1);
+
+//   pthread_mutex_lock(&mutexB);
+//   while (1)
+//   {
+//     cout << "我是线程1" << std::endl;
+//     sleep(1);
+//   }
+
+//   pthread_mutex_unlock(&mutexA);
+//   pthread_mutex_unlock(&mutexB);
+// }
+// void *callback2(void *args)
+// {
+//   pthread_mutex_lock(&mutexB);
+//   sleep(1);
+
+//   pthread_mutex_lock(&mutexA);
+//   while (1)
+//   {
+//     cout << "我是线程2" << std::endl;
+//     sleep(1);
+//   }
+
+//   pthread_mutex_unlock(&mutexA);
+//   pthread_mutex_unlock(&mutexB);
+// }
+// int main()
+// {
+//   pthread_t t1, t2;
+//   pthread_create(&t1, nullptr, callback1, (void *)"thread1");
+//   pthread_create(&t1, nullptr, callback2, (void *)"thread1");
+
+//   pthread_join(t1, nullptr);
+//   pthread_join(t2, nullptr);
+//   return 0;
+// }
 // int tickets = 1000;
 // Mutex mutex;
 
