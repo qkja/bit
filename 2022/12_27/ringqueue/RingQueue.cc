@@ -21,7 +21,7 @@ void *productor(void *args)
     int data = rand() % 10;
     p->push(data);
     cout << "pthread[ " << pthread_self() << " ] 生产了一个数据 " << data << endl;
-    // sleep(1);
+    //sleep(3);
   }
 }
 
@@ -36,10 +36,10 @@ void *consumer(void *args)
 
     // dup2(fdCon, 1);
     // pthread_mutex_unlock(&mutex);
+    sleep(10);
 
     int data = p->pop();
     cout << "pthread[ " << pthread_self() << " ] 消费了一个数据 " << data << endl;
-    sleep(10);
   }
 }
 
