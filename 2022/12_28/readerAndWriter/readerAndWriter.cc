@@ -14,7 +14,7 @@ void *reader(void *args)
     cout << "reader read: " << board << endl;
     sleep(3);
     pthread_rwlock_unlock(&rw);
-    sleep(1);
+    sleep(2);
   }
 }
 
@@ -28,7 +28,7 @@ void *writer(void *args)
     pthread_rwlock_wrlock(&rw);
     board++;
     pthread_rwlock_unlock(&rw);
-    //sleep(2);
+    sleep(1);
   }
 }
 
