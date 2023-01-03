@@ -70,7 +70,7 @@ public:
     // 临时变量要写入内核中  bind网络信息
     // int bind(int sockfd, const struct sockaddr *addr,
     //             socklen_t addrlen);
-    if (bind(_socketFd, (const sockaddr *)&local, sizeof(local) == -1))
+    if (bind(_socketFd, (sockaddr *)&local, sizeof(local) == -1))
     {
       logMessage(FATAL, "%s:%d", strerror(errno), _socketFd);
       exit(2);
@@ -82,23 +82,23 @@ public:
   void start()
   {
     // 服务器都是死循环
-    // while (true)
-    // {
-    //   logMessage(NOTICE, "server 提供服务中");
-    //   sleep(1);
-    // }
-    char inbuffer[1024];  // 读去信息
-    char outbuffer[1024]; // 发送信息
     while (true)
     {
-      memset(inbuffer, '\0', sizeof(inbuffer));
-      // 正常进行网络读写
-      // 谁给我发消息,我们怎么会消息
-      // 后面两个参数是输出行参数
-      struct sockaddr_in peer;      // 输出型参数
-      socklen_t len = sizeof(peer); // 输入输出行参数
-      ssize_t s = recvfrom(_socketFd, inbuffer, sizeof(inbuffer) - 1, 0, (struct sockaddr *)&peer, &len);
+      logMessage(NOTICE, "server 提供服务中");
+      sleep(1);
     }
+    // char inbuffer[1024];  // 读去信息
+    // char outbuffer[1024]; // 发送信息
+    // while (true)
+    // {
+    //   memset(inbuffer, '\0', sizeof(inbuffer));
+    //   // 正常进行网络读写
+    //   // 谁给我发消息,我们怎么会消息
+    //   // 后面两个参数是输出行参数
+    //   struct sockaddr_in peer;      // 输出型参数
+    //   socklen_t len = sizeof(peer); // 输入输出行参数
+    //   ssize_t s = recvfrom(_socketFd, inbuffer, sizeof(inbuffer) - 1, 0, (struct sockaddr *)&peer, &len);
+    // }
   }
 
 private:
@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
   }
 
   udpServer ser(port, ip);
+  //std::cout << port << " " << ip << std::endl;
   ser.init();
   ser.start();
   return 0;
