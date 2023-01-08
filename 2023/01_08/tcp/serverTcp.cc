@@ -1,4 +1,6 @@
 #include "util.hpp"
+#include "ThreadPool.hpp"
+#include "Task.hpp"
 class ServerTcp;
 struct ThreadData
 {
@@ -16,7 +18,7 @@ class ServerTcp
 {
 public:
   ServerTcp(uint16_t port, std::string ip = "")
-      : _sock(-1), _port(port), _ip(ip)
+      : _sock(-1), _port(port), _ip(ip), _tp(nullptr)
   {
   }
   ~ServerTcp()
@@ -61,10 +63,15 @@ public:
       exit(LISTEN_ERR);
     }
     logMessage(DEBUG, "listen %s:%d", strerror(errno), _sock);
+
+    // 加载线程池
+    _tp = ThreadPool<Task>::getInstance();
   }
 
   void loop()
   {
+    _tp->start(); // 启动线程池
+    logMessage(DEBUG, "线程池启动成功,线程个数 %d", _tp->threadNum());
     signal(SIGCHLD, SIG_IGN); // 仅在Linux下有效
     // accept(); //返回值 值最关键的  是一个新的socket ??
     while (true)
@@ -90,9 +97,7 @@ public:
       /*
             // 5.1 多进程版本
             pid_t id = fork();
-
             assert(id != -1); // 服务器都挂了
-
             if (0 == id)
             {
               // 建议关掉 监听套接字 毕竟是继承父进程的
@@ -101,13 +106,11 @@ public:
               transService(serviceSock, peerIP, peerPort);
               exit(0);
             }
-
             // 父进程  -- 不需要对外提供服务 父进程的文件描述符会被子进程继承吗?会的,写时拷贝
             // 那么父进程也要关闭自己的文件描述(写时拷贝)
             close(serviceSock);
             // 父进程如何关心 子进程 回收资源 非阻塞可以,但是这里不建议 需要轮询检测
             // 子进程在退出的时候会发送一个信号 这个就可以了
-
             // logMessage(DEBUG, "server ...");
             // sleep(1);
             */
@@ -129,10 +132,16 @@ public:
       // assert(ret > 0);
       // (void)ret;
 
-      // 5.2 线程版本 进程成本太高
-      ThreadData *pData = new ThreadData(peerPort, peerIP, serviceSock, this);
-      pthread_t tid;
-      pthread_create(&tid, nullptr, threadRoutine, (void *)pData);
+      // // 5.2 线程版本 进程成本太高
+      // ThreadData *pData = new ThreadData(peerPort, peerIP, serviceSock, this);
+      // pthread_t tid;
+      // pthread_create(&tid, nullptr, threadRoutine, (void *)pData);
+
+      // 5.3 线程池版本
+
+      Task t(serviceSock, peerIP, peerPort, std::bind(&ServerTcp::transService, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+      _tp->push(t);
     }
   }
 
@@ -149,8 +158,7 @@ private:
 
 private:
   // void transService(int sock, const std::string &peerIP, const uint16_t &peerPort)
-  void
-  transService(int sock, const std::string peerIP, const uint16_t peerPort)
+  void transService(int sock, const std::string peerIP, const uint16_t peerPort)
   {
     assert(sock > 0);
     assert(!peerIP.empty());
@@ -207,6 +215,8 @@ private:
   int _sock; // 监听套接字
   uint16_t _port;
   std::string _ip; // ip地址
+
+  ThreadPool<Task> *_tp;
 };
 
 static void Usage(char *proc)

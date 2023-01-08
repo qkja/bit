@@ -41,17 +41,17 @@ int main(int argc, char *argv[])
     exit(CONNECT_ERR);
   }
   std::cout << "info :connect success... " << sock << std::endl;
-  
+
   std::string message;
   while (!quit)
   {
     message.clear();
     std::cout << "Please enter# ";
     std::getline(std::cin, message);
-    if(strcasecmp(message.c_str(), "quit") == 0)
+    if (strcasecmp(message.c_str(), "quit") == 0)
     {
       quit = true;
-      //我们还要把这个消息写道服务端,让他也退出
+      // 我们还要把这个消息写道服务端,让他也退出
     }
 
     ssize_t s = write(sock, message.c_str(), message.size());
