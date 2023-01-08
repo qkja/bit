@@ -1,4 +1,16 @@
 #include "util.hpp"
+class ServerTcp;
+struct ThreadData
+{
+  uint16_t _clientPort;
+  std::string _clientIp;
+  int _sock;
+  ServerTcp *_this;
+  ThreadData(uint16_t port, std::string ip, int sock, ServerTcp *ts)
+      : _clientPort(port), _clientIp(ip), _sock(sock), _this(ts)
+  {
+  }
+};
 
 class ServerTcp
 {
@@ -100,32 +112,49 @@ public:
             // sleep(1);
             */
 
-      // 5.1.1 d多进程版本 2
-      pid_t id = fork();
-      if (id == 0)
-      {
-        close(_sock);
+      // // 5.1.1 d多进程版本 2
+      // pid_t id = fork();
+      // if (id == 0)
+      // {
+      //   close(_sock);
 
-        if (fork() > 0)
-          exit(0);
-        // 孙子进程 其中他没有了 父亲,也就是孤儿进程,会被bash进行管理
-        transService(serviceSock, peerIP, peerPort);
-        exit(0);
-      }
-      close(serviceSock);
-      pid_t ret = waitpid(id, nullptr, 0); // 子进程一拿到就直接退出了,我们是回收子进程的资源
-      assert(ret > 0);
-      (void)ret;
+      //   if (fork() > 0)
+      //     exit(0);
+      //   // 孙子进程 其中他没有了 父亲,也就是孤儿进程,会被bash进行管理
+      //   transService(serviceSock, peerIP, peerPort);
+      //   exit(0);
+      // }
+      // close(serviceSock);
+      // pid_t ret = waitpid(id, nullptr, 0); // 子进程一拿到就直接退出了,我们是回收子进程的资源
+      // assert(ret > 0);
+      // (void)ret;
+
+      // 5.2 线程版本 进程成本太高
+      ThreadData *pData = new ThreadData(peerPort, peerIP, serviceSock, this);
+      pthread_t tid;
+      pthread_create(&tid, nullptr, threadRoutine, (void *)pData);
     }
   }
 
 private:
+  static void *threadRoutine(void *args)
+  {
+    pthread_detach(pthread_self()); // 线程分离
+
+    ThreadData *pData = (ThreadData *)args;
+    pData->_this->transService(pData->_sock, pData->_clientIp, pData->_clientPort);
+    delete pData;
+    return nullptr;
+  }
+
+private:
   // void transService(int sock, const std::string &peerIP, const uint16_t &peerPort)
-  void transService(int sock, const std::string peerIP, const uint16_t peerPort)
+  void
+  transService(int sock, const std::string peerIP, const uint16_t peerPort)
   {
     assert(sock > 0);
     assert(!peerIP.empty());
-    // 读取客户的输入
+    //  读取客户的输入
     char inbuffer[1024];
     while (true)
     {
