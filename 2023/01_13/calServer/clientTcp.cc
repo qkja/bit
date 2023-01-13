@@ -1,9 +1,6 @@
 #include "util.hpp"
 #include "Protocol.hpp"
 #include <cstdio>
-// 2. 需要bind吗？？需要，但是不需要自己显示的bind！ 不要自己bind！！！！
-// 3. 需要listen吗？不需要的！
-// 4. 需要accept吗？不需要的!
 
 volatile bool quit = false;
 
@@ -59,27 +56,32 @@ int main(int argc, char *argv[])
       continue;
     }
 
-    Request req;
+    Request req; // 这是一个请求
+
     std::string package;
-    req.serialize(&package); // 1 + 1
-    package = encode(package, package.size());
+    req.serialize(&package);                   // 1 + 1 序列化
+    package = encode(package, package.size()); // 添加报头
     ssize_t s = write(sock, package.c_str(), package.size());
     if (s > 0)
     {
       char buff[1024];
-      size_t s = read(sock, buff, sizeof(buff) - 1);
+      ssize_t ss = read(sock, buff, sizeof(buff));
       if (s > 0)
-        buff[s] = 0;
-      std::string echoPackage = buff;
-      Response resp;
+      {
+        buff[s] = '\0';
+      }
+      std::string echoPackage;
+      Response res;
+      // 解码
       uint32_t len = 0;
       std::string tmp = decode(echoPackage, &len);
       if (len > 0)
       {
-        echoPackage = tmp;
-        resp.deserialize(echoPackage);
-        printf("[exitcode: %d] %d\n", resp.exitCode_, resp.result_);
+         echoPackage = tmp;
+         res.deserialize(echoPackage); // 反序列化
+         printf("[exitCode %d] %d\n",res.exitCode_,res.result_);
       }
+       
     }
     else if (s <= 0)
     {

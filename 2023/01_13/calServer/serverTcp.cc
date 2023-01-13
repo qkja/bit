@@ -65,7 +65,6 @@ void transService(int sock, const std::string &clientIp, uint16_t clientPort)
 
 void execCommand(int sock, const std::string &clientIp, uint16_t clientPort)
 {
-  aaaaaaaa;
   assert(sock >= 0);
   assert(!clientIp.empty());
   assert(clientPort >= 1024);
@@ -205,8 +204,9 @@ void netCal(int sock, const std::string &clientIp, uint16_t clientPort)
 
     if (req.deserialize(package))
     {
+      req.debug();
       Response resp = calculator(req);
-      // 我们需要进行序列化
+      // 我们需要进行序列化 这里已经拿到结果了,我们需要把结果给序列化了
       std::string respPackage;
       resp.serialize(&respPackage);
 
