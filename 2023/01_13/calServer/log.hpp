@@ -64,11 +64,6 @@ void logMessage(int level, const char *format, ...)
 
   va_end(ap); // ap = NULL
 
-  // 每次打开太麻烦
-  // umask(0);
-  // int fd = open(LOGFILE, O_WRONLY | O_CREAT | O_APPEND, 0666);
-  // assert(fd >= 0);
-
   FILE *out = (level == FATAL) ? stderr : stdout;
   fprintf(out, "%s | %u | %s | %s\n",
           log_level[level],
@@ -78,12 +73,4 @@ void logMessage(int level, const char *format, ...)
 
   fflush(out);        // 将C缓冲区中的数据刷新到OS
   fsync(fileno(out)); // 将OS中的数据尽快刷盘
-
-  // close(fd);
-  // char *s = format;
-  // while(s){
-  //     case '%':
-  //         if(*(s+1) == 'd')  int x = va_arg(ap, int);
-  //     break;
-  // }
 }

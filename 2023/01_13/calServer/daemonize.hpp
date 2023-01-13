@@ -30,5 +30,4 @@ void daemonize()
     if (fd > STDERR_FILENO)
       close(fd);
   }
-  // 6. close(0,1,2)// 严重不推荐
 }

@@ -3,11 +3,11 @@
 #include "Task.hpp"
 #include "ThreadPool.hpp"
 #include "daemonize.hpp"
-
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <cstring>
 #include <cerrno>
 
 class ServerTcp; // 申明一下ServerTcp
@@ -65,6 +65,7 @@ void transService(int sock, const std::string &clientIp, uint16_t clientPort)
 
 void execCommand(int sock, const std::string &clientIp, uint16_t clientPort)
 {
+  aaaaaaaa;
   assert(sock >= 0);
   assert(!clientIp.empty());
   assert(clientPort >= 1024);
@@ -159,6 +160,7 @@ static Response calculator(const Request &req)
   return resp;
 }
 
+
 // 1. 全部手写
 // 2. 部分采用别人的方案--序列化和反序列化的问题
 void netCal(int sock, const std::string &clientIp, uint16_t clientPort)
@@ -166,46 +168,52 @@ void netCal(int sock, const std::string &clientIp, uint16_t clientPort)
   assert(sock >= 0);
   assert(!clientIp.empty());
   assert(clientPort >= 1024);
-
-  // 9\r\n100 + 200\r\n    9\r\n112 / 200\r\n
+  // 这里一定是序列化的字符串
   std::string inbuffer;
-  while (true)
+  while (1)
   {
     Request req;
     char buff[128];
-    ssize_t s = read(sock, buff, sizeof(buff) - 1);
+    // tcp不一定全部发完,我们这里读取有很多的细节
+    ssize_t s = read(sock, buff, sizeof(buff));
     if (s == 0)
     {
-      logMessage(NOTICE, "client[%s:%d] close sock, service done", clientIp.c_str(), clientPort);
+      // 关了,我们什么也做不了
+      logMessage(NOTICE, "client[%s:%d] close sock,server done", clientIp.c_str(), clientPort);
       break;
     }
     else if (s < 0)
     {
-      logMessage(WARINING, "read client[%s:%d] error, errorcode: %d, errormessage: %s",
-                 clientIp.c_str(), clientPort, errno, strerror(errno));
+      logMessage(WARINING, "read client[%s:%d] errno, errnocode %d %s",
+                 clientIp.c_str(),
+                 clientPort,
+                 errno,
+                 strerror(errno));
       break;
     }
 
-    // read success
-    buff[s] = 0;
+    // 到这里就读完了
+    buff[s] = '\0';
     inbuffer += buff;
-    // 1. 检查inbuffer是不是已经具有了一个strPackage
-    uint32_t packageLen = 0;
-    std::string package = decode(inbuffer, &packageLen); // TODO
-    if (packageLen == 0)
-      continue; // 无法提取一个完整的报文，继续努力读取吧
-    // 2. 已经获得一个完整的package
+    // 检测inbuffer是不是已经
+    uint32_t packagaLen = 0;
+    std::string package = req.decode(inbuffer, &packagaLen);
+
+    if (packagaLen == 0)
+      continue;
+    // 到这里我们已经读取成功了,最起码有一个报文
+
     if (req.deserialize(package))
     {
-      req.debug();
-      // 3. 处理逻辑, 输入的是一个req，得到一个resp
-      Response resp = calculator(req); // resp是一个结构化的数据
-      // 4. 对resp进行序列化
+      Response resp = calculator(req);
+      // 我们需要进行序列化
       std::string respPackage;
       resp.serialize(&respPackage);
-      // 5. 对报文进行encode -- //TODO
-      respPackage = encode(respPackage, respPackage.size());
-      // 6. 简单进行发送 -- 后续处理
+
+      // 对报文添加包头
+      respPackage = resp.encode(respPackage, respPackage.size());
+      // 这里可以发了 我们一次会发多少字节,后面同意解决,这里很简单,主要是代码会变的非常乱
+
       write(sock, respPackage.c_str(), respPackage.size());
     }
   }
@@ -282,19 +290,13 @@ public:
     // 4. 加载线程池
     tp_ = ThreadPool<Task>::getInstance();
   }
-  // static void *threadRoutine(void *args)
-  // {
-  //     pthread_detach(pthread_self()); //设置线程分离
-  //     ThreadData *td = static_cast<ThreadData *>(args);
-  //     td->this_->transService(td->sock_, td->clinetIp_, td->clientPort_);
-  //     delete td;
-  //     return nullptr;
-  // }
+
   void loop()
   {
-    // signal(SIGCHLD, SIG_IGN); // only Linux
+    // 启动线程池
     tp_->start();
     logMessage(DEBUG, "thread pool start success, thread num: %d", tp_->threadNum());
+
     while (!quit_)
     {
       struct sockaddr_in peer;
@@ -317,72 +319,9 @@ public:
 
       logMessage(DEBUG, "accept: %s | %s[%d], socket fd: %d",
                  strerror(errno), peerIp.c_str(), peerPort, serviceSock);
-      // 5 提供服务, echo -> 小写 -> 大写
-      // 5.0 v0 版本 -- 单进程 -- 一旦进入transService，主执行流，就无法进行向后执行，只能提供完毕服务之后才能进行accept
-      // transService(serviceSock, peerIp, peerPort);
-
-      // 5.1 v1 版本 -- 多进程版本 -- 父进程打开的文件会被子进程继承吗？会的
-      // pid_t id = fork();
-      // assert(id != -1);
-      // if(id == 0)
-      // {
-      //     close(listenSock_); //建议
-      //     //子进程
-      //     transService(serviceSock, peerIp, peerPort);
-      //     exit(0); // 进入僵尸
-      // }
-      // // 父进程
-      // close(serviceSock); //这一步是一定要做的！
-
-      // 5.1 v1.1 版本 -- 多进程版本  -- 也是可以的
-      // 爷爷进程
-      // pid_t id = fork();
-      // if(id == 0)
-      // {
-      //     // 爸爸进程
-      //     close(listenSock_);//建议
-      //     // 又进行了一次fork，让 爸爸进程
-      //     if(fork() > 0) exit(0);
-      //     // 孙子进程 -- 就没有爸爸 -- 孤儿进程 -- 被系统领养 -- 回收问题就交给了系统来回收
-      //     transService(serviceSock, peerIp, peerPort);
-      //     exit(0);
-      // }
-      // // 父进程
-      // close(serviceSock); //这一步是一定要做的！
-      // // 爸爸进程直接终止，立马得到退出码，释放僵尸进程状态
-      // pid_t ret = waitpid(id, nullptr, 0); //就用阻塞式
-      // assert(ret > 0);
-      // (void)ret;
-
-      // 5.2 v2 版本 -- 多线程
-      // 这里不需要进行关闭文件描述符吗？？不需要啦
-      // 多线程是会共享文件描述符表的！
-      // ThreadData *td = new ThreadData(peerPort, peerIp, serviceSock, this);
-      // pthread_t tid;
-      // pthread_create(&tid, nullptr, threadRoutine, (void*)td);
-
-      // 5.3 v3 版本 --- 线程池版本
-      // 5.3.1 构建任务
-      // 5.3 v3.1
-      // Task t(serviceSock, peerIp, peerPort, std::bind(&ServerTcp::transService, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-      // tp_->push(t);
-
-      // 5.3 v3.2
-      // Task t(serviceSock, peerIp, peerPort, transService);
-      // tp_->push(t);
-      // 5.3 v3.3
-      // Task t(serviceSock, peerIp, peerPort, execCommand);
-      // tp_->push(t);
-
-      // 5.4 v3.3
+      // 这里就是任务
       Task t(serviceSock, peerIp, peerPort, netCal);
       tp_->push(t);
-
-      // waitpid(); 默认是阻塞等待！WNOHANG
-      // 方案1
-
-      // logMessage(DEBUG, "server 提供 service start ...");
-      // sleep(1);
     }
   }
 

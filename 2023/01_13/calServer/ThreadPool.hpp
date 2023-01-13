@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include <cassert>
 #include <queue>
@@ -61,6 +60,7 @@ public:
       t(); // 让指定的先处理这个任务
     }
   }
+
   void start()
   {
     assert(!isStart_);
@@ -71,6 +71,7 @@ public:
     }
     isStart_ = true;
   }
+
   void push(const T &in)
   {
     lockQueue();
@@ -78,6 +79,7 @@ public:
     choiceThreadForHandler();
     unlockQueue();
   }
+
   ~ThreadPool()
   {
     pthread_mutex_destroy(&mutex_);
@@ -109,7 +111,6 @@ private:
   pthread_cond_t cond_;
 
   static ThreadPool<T> *instance;
-  // const static int a = 100;
 };
 
 template <class T>

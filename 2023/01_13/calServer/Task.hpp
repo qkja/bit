@@ -7,7 +7,7 @@
 class Task
 {
 private:
-  //typedef std::function<void(int, std::string, uint16_t)> callback_t;
+  // typedef std::function<void(int, std::string, uint16_t)> callback_t;
   using callback_t = std::function<void(int, std::string, uint16_t)>;
 
 public:
@@ -26,7 +26,7 @@ public:
   int run()
   {
     logMessage(DEBUG, "线程id %p 处理%s %d 的请求开始了...", pthread_self(), _ip.c_str(), _port);
-    _func(_sock, _ip, _port);
+    _func(_sock, _ip, _port);// 回调函数
     logMessage(DEBUG, "线程id %p 处理%s %d 的请求结束了...", pthread_self(), _ip.c_str(), _port);
   }
 
