@@ -3,12 +3,14 @@
 #include <string>
 #include <string.h>
 #include <cassert>
+#include <jsoncpp/json/json.h>
 
 #define CRLF "\r\n"
 #define CRLF_LEN strlen(CRLF)
 #define SPACE " "
 #define SPACE_LEN strlen(SPACE)
 #define OPS "+-*/%"
+// #define MY_SELF 1
 
 // 封包
 std::string encode(std::string &in, uint32_t len)
@@ -66,6 +68,7 @@ public:
   // 序列化 -- 结构化的数据 -> 字符串
   void serialize(std::string *out)
   {
+#ifdef MY_SELF
     // 它的格式是123 + 346
     std::string dataOne = std::to_string(x_);
     std::string dataTwo = std::to_string(y_);
@@ -75,12 +78,27 @@ public:
     (*out).push_back(op_);
     *out += SPACE;
     *out += dataTwo;
+#else
+    // json
+    // 1. Value 对象,接受几乎任意类型
+    // 2. json是基于KV的
+    // 3. 两套操作方法 和版本有关系,我们这里是简单的一板
+    // 4. 会将所有的数据内容转化为字符串
+    Json::Value root;
+    root["x"] = x_;
+    root["y"] = y_;
+    root["op"] = op_;
+    // Json::FastWriter fw; // 看成一个map
+    Json::StyledWriter fw;
+
+    //*out = fw.write(&root);
+    *out = fw.write(root);
+#endif
   }
 
   // 反序列化 -- 字符串 -> 结构化的数据
   bool deserialize(const std::string &in)
   {
-    // 100 + 200 严格按照这种形式
     size_t spaceOne = in.find(SPACE);
     if (spaceOne == std::string::npos)
       return false;
@@ -88,6 +106,8 @@ public:
     size_t spaceTwo = in.rfind(SPACE);
     if (spaceTwo == std::string::npos)
       return false;
+      
+#ifdef MY_SELF
     // 开始进行 反序列化
     // 100 + 200
     std::string dataOne = in.substr(0, spaceOne);
@@ -98,8 +118,16 @@ public:
       return false;
     x_ = atoi(dataOne.c_str());
     y_ = atoi(dataTwo.c_str());
-
     op_ = oper[0];
+#else
+    Json::Value root;
+    Json::Reader rd;
+    rd.parse(in, root);
+
+    x_ = root["x"].asInt();
+    y_ = root["y"].asInt();
+    op_ = root["op"].asInt();
+#endif
     return true;
   }
 
@@ -130,22 +158,48 @@ public:
   // 序列化
   void serialize(std::string *out)
   {
+#ifdef MY_SELF
     // "exitCode_ result_"
     std::string ec = std::to_string(exitCode_);
     std::string res = std::to_string(result_);
     *out = ec;
     *out += SPACE;
     *out += res;
+#else
+    // json
+    // 1. Value 对象,接受几乎任意类型
+    // 2. json是基于KV的
+    // 3. 两套操作方法 和版本有关系,我们这里是简单的一板
+    // 4. 会将所有的数据内容转化为字符串
+    Json::Value root;
+    root["exitCode"] = exitCode_;
+    root["result"] = result_;
+    // Json::FastWriter fw; // 看成一个map
+    Json::StyledWriter fw;
+
+    //*out = fw.write(&root);
+    *out = fw.write(root);
+#endif
   }
+
   // 反序列化
   bool deserialize(std::string &in)
   {
-    // "exitCode_ result_"
     size_t space = in.find(SPACE);
     if (space == std::string::npos)
       return false;
+#ifdef MY_SELF
+    // "exitCode_ result_;
     exitCode_ = atoi(in.substr(0, space).c_str());
     result_ = atoi(in.substr(space + SPACE_LEN).c_str());
+#else
+    Json::Value root;
+    Json::Reader rd;
+    rd.parse(in, root);
+
+    exitCode_ = root["exitCode"].asInt();
+    result_ = root["result"].asInt();
+#endif
     return true;
   }
 

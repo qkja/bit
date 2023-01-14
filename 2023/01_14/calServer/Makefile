@@ -1,10 +1,11 @@
 .PHONY:all
 all:clientTcp serverTcpd
+Method=-DMY_SELF
 
 clientTcp: clientTcp.cc
-	g++ -o $@ $^ -std=c++11
+	g++ -o $@ $^ $(Method) -std=c++11 -ljsoncpp
 serverTcpd:serverTcp.cc
-	g++ -o $@ $^ -std=c++11 -lpthread
+	g++ -o $@ $^ $(Method) -std=c++11 -lpthread -ljsoncpp
 
 .PHONY:clean
 clean:

@@ -10,6 +10,7 @@ static void Usage(std::string proc)
   std::cerr << "Example:\n\t" << proc << " 127.0.0.1 8081\n"
             << std::endl;
 }
+
 // ./clientTcp serverIp serverPort
 int main(int argc, char *argv[])
 {
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
     message.clear();
     std::cout << "请输入表达式>>> "; // 1 + 1
     std::getline(std::cin, message); // 结尾不会有\n
-    //std::cout << message << std::endl;
+    // std::cout << message << std::endl;
     if (strcasecmp(message.c_str(), "quit") == 0)
     {
       quit = true;
@@ -67,15 +68,17 @@ int main(int argc, char *argv[])
       // 这里失败了,也就是不玩了
       continue;
     }
-    //std::cout << message << std::endl;
+    // std::cout << message << std::endl;
 
     std::string package;
     // 1 + 1 序列化
     req.serialize(&package);
-    std::cout << "debug-> serialize " << package.c_str() << std::endl;
+    std::cout << "debug-> serialize-> "
+              << package.c_str() << std::endl;
     // 添加报头
     package = encode(package, package.size());
-    std::cout << "debug-> encode " << package.c_str() << std::endl;
+    std::cout << "debug-> encode->\n"
+              << package.c_str() << std::endl;
 
     ssize_t s = write(sock, package.c_str(), package.size());
     std::string echoPackage;
@@ -91,7 +94,8 @@ int main(int argc, char *argv[])
       }
 
       echoPackage += buff;
-      std::cout << "读到的报文 " << echoPackage << std::endl;
+      std::cout << "读到的报文 ->\n"
+                << echoPackage << std::endl;
 
       Response res;
       uint32_t len = 0;
@@ -101,10 +105,11 @@ int main(int argc, char *argv[])
       if (len > 0)
       {
         echoPackage = tmp;
-        std::cout << "解包 " << echoPackage << std::endl;
+        std::cout << "解包 ->\n"
+                  << echoPackage << std::endl;
 
         res.deserialize(echoPackage); // 反序列化
-                                      // res.debug();                  // 辅助调试,这是 解包的报文
+        // res.debug();                  // 辅助调试,这是 解包的报文
 
         printf("[exitCode %d] %d\n", res.exitCode_, res.result_);
       }
@@ -113,7 +118,7 @@ int main(int argc, char *argv[])
     {
       break;
     }
-  }
+   }
   close(sock);
   return 0;
 }
