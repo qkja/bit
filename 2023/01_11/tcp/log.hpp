@@ -15,6 +15,29 @@
 
 #define LOGFILE "server.log"
 const char *log_level[] = {"DEBUG", "NOTICE", "WARINING", "FATAL"};
+int logFd = -1;
+
+class Log
+{
+public:
+  Log() : _logFd(-1)
+  {
+  }
+  ~Log()
+  {
+  }
+  void enable()
+  {
+    umask(0);
+    _logFd = open(LOGFILE, O_WRONLY | O_CREAT | O_APPEND, 0666) : -1;
+    assert(_logFd >= 0);
+    dup2(_logFd, 1);
+    dup2(_logFd, 2);
+  }
+
+private:
+  int _logFd;
+};
 
 void logMessage(int level, const char *format, ...)
 {
@@ -27,20 +50,20 @@ void logMessage(int level, const char *format, ...)
 
   vsnprintf(logInfo, sizeof(logInfo) - 1, format, ap);
   va_end(ap);
-  umask(0);
-  int fd = open(LOGFILE, 0666, O_WRONLY | O_CREAT | O_APPEND);
-  assert(fd >= 0);
 
+  if (logFd != -1)
+  {
+    dup2(logFd, 1);
+    dup2(logFd, 2);
+  }
   FILE *out = (level == FATAL) ? stderr : stdout;
   char *name = getenv("USER");
-  dup2(fd, 1);
-  dup2(fd, 2);
+
   fprintf(out, "%s | %u | %s | %s\n",
           log_level[level],
           (unsigned long)(time(nullptr)),
           name == nullptr ? "unknow" : name,
           logInfo);
   fflush(out);
-  fsync(fd);
-  close(fd);
+  fsync(out->_fileno);
 }
