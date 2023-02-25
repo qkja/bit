@@ -9,32 +9,41 @@
 #include <algorithm>
 using namespace std;
 
-class A
-{
-public:
-    A(int b = 0)
-        : a(b)
-    {
-        cout << "bbbb" << endl;
-    }
-    bool operator()()
-    {
-        cout << "cccccc" << endl;
-        return true;
-    }
-
-public:
-    int a;
-};
-
 int main()
 {
-    A a();
-    /*A()();*/
-    cout << "aaaaaaa" << endl;
-    // a();
+    set<int> s;
+    
+    auto it = s.insert(1);
+    s.insert(1);
     return 0;
 }
+
+// class A
+// {
+// public:
+//     A(int b = 0)
+//         : a(b)
+//     {
+//         cout << "bbbb" << endl;
+//     }
+//     bool operator()()
+//     {
+//         cout << "cccccc" << endl;
+//         return true;
+//     }
+
+// public:
+//     int a;
+// };
+
+// int main()
+// {
+//     A a();
+//     /*A()();*/
+//     cout << "aaaaaaa" << endl;
+//     // a();
+//     return 0;
+// }
 
 // bool myfunction(int i, int j)
 // {
