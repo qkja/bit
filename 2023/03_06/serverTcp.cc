@@ -6,7 +6,58 @@
  */
 
 #include "util.hpp"
+void transService(int sock, const std::string peerIP, const uint16_t peerPort)
+{
+  assert(sock > 0);
+  assert(!peerIP.empty());
+  //  读取客户的输入
+  char inbuffer[1024];
+  while (true)
+  {
+    memset(inbuffer, '\0', sizeof(inbuffer));
+    // udp 的我们不能用  这是流式的吗? 是的
+    ssize_t s = read(sock, inbuffer, sizeof(inbuffer) - 1);
+    if (s > 0)
+    {
+      inbuffer[s] = '\0';
+      if (strcasecmp(inbuffer, "quit") == 0)
+      {
+        logMessage(DEBUG, "客端退出了 %s[%d]", peerIP.c_str(), peerPort);
+        break;
+      }
+      logMessage(DEBUG, "trans before: [%s][%d]>>> %s", peerIP.c_str(), peerPort, inbuffer);
 
+      // 目前提供的服务事大小写转化
+      for (int i = 0; i < s; i++)
+      {
+        if (isalpha(inbuffer[i]) && islower(inbuffer[i]))
+          inbuffer[i] = toupper(inbuffer[i]);
+      }
+      logMessage(DEBUG, "trans after: [%s][%d]>>> %s", peerIP.c_str(), peerPort, inbuffer);
+
+      // 此时响应回去  write
+      write(sock, inbuffer, strlen(inbuffer));
+
+      // 为何可以读写 --  这是tcp或者udp 支持的,
+    }
+    else if (s == 0)
+    {
+      // 有一段关闭了 此时这一端读到的就是0
+      logMessage(DEBUG, "客端退出了 %s[%d]", peerIP.c_str(), peerPort);
+      break;
+    }
+    else
+    {
+      logMessage(DEBUG, "读取出错 %s %s[%d]", strerror(errno), peerIP.c_str(), peerPort);
+      break;
+    }
+  }
+
+  // 走到这里一定事退出了  服务到此结束
+  // 回收资源
+  close(sock);
+  logMessage(DEBUG, "server close %d done", sock);
+}
 class ServerTcp
 {
 public:
@@ -48,7 +99,6 @@ public:
       exit(BIND_ERR);
     }
 
-    
     logMessage(DEBUG, "bind %s:%d", strerror(errno), _sock);
 
     // 3. 监听sock udp是面向连接的 做任何事之前先干什么
@@ -60,13 +110,26 @@ public:
     logMessage(DEBUG, "listen %s:%d", strerror(errno), _sock);
   }
 
-  void start()
+  void loop()
   {
-    // accept(); //返回值 值最关键的  是一个新的socket ??
     while (true)
     {
-      logMessage(DEBUG, "server ...");
-      sleep(1);
+      struct sockaddr_in peer;
+      socklen_t len = sizeof(peer);
+
+      int serviceSock = accept(_sock, (struct sockaddr *)&peer, &len);
+      if (serviceSock < 0)
+      {
+        logMessage(FATAL, "%s:%d", strerror(errno), _sock);
+        continue;
+      }
+
+      // 4. 获取客户端的基本信息
+      std::string peerIP = inet_ntoa(peer.sin_addr);
+      uint16_t peerPort = ntohs(peer.sin_port);
+      logMessage(DEBUG, "accept: %s | %s[%d] sockfd %d", strerror(errno), peerIP.c_str(), peerPort, serviceSock);
+      // 先来提供一个服务     
+      transService(serviceSock, peerIP, peerPort);
     }
   }
 
@@ -80,6 +143,6 @@ int main()
 {
   ServerTcp server(8080);
   server.init();
-  server.start();
+  server.loop();
   return 0;
 }
