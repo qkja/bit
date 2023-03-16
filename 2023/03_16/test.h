@@ -49,29 +49,28 @@
 //   return key;
 // }
 
-#include <iostream>
-#include <unistd.h>
-#include <error.h>
-#include <cstring>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
+// #include <iostream>
+// #include <unistd.h>
+// #include <error.h>
+// #include <cstring>
+// #include <unistd.h>
+// #include <sys/types.h>
+// #include <sys/wait.h>
+// #include <sys/stat.h>
+// #include <sys/types.h>
+// #include <sys/stat.h>
+// #include <fcntl.h>
+// #include <sys/ipc.h>
+// #include <sys/shm.h>
 
-#include <stdlib.h>
-using namespace std;
-key_t CreateKey()
-{ // key_t 就是一个int类型
-  key_t key = ftok(PATH_NAME, PROJ_ID);
-  if (key < 0)
-  {
-    std::cerr << "ftok: " << strerror(errno) << std::endl;
-    exit(1);
-  }
-  return key;
-}
+// #include <stdlib.h>
+// using namespace std;
+
+// #define PATH_NAME "/home/bit/104/2022/12_12"
+// #define PROJ_ID 0x14
+// #define MEM_SIZE 4096
+
+// key_t CreateKey()
+// {
+//   return ftok(PATH_NAME, PROJ_ID);
+// }
