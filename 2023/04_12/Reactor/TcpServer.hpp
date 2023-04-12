@@ -318,4 +318,7 @@ private:
   struct epoll_event *_revs = nullptr;
   // 5. 设置啊完整报文的处理方法
   callback_t _cb;
+
+  // 6. 绑定服务
+  std::unordered_map<std::string, callback_t> _cbs; // 给服务起名字
 };
