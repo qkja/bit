@@ -9,6 +9,8 @@
 void getNext(const std::string &str, std::vector<int> &next)
 {
   // 这里是有问题的
+  if (next.size() == 1)
+    return;
   next[0] = -1;
   next[1] = 0;
   int k = 0;
@@ -78,5 +80,6 @@ int main()
   std::cout << KMP("ababcabcdabcde", "abcd", 0) << std::endl;
   std::cout << KMP("ababcabcdabcde", "abcde", 0) << std::endl;
   std::cout << KMP("ababcabcdabcde", "abcdef", 0) << std::endl;
+  std::cout << KMP("ababcabcdabcde", "a", 0) << std::endl;
   return 0;
 }
