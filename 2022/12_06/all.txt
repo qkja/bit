@@ -1,8 +1,0 @@
-hello fprintf 2
-hello fputs 2
-hello perror 2: Success
-hello printf 1
-hello fprintf 1
-hello fputs 1
-hello cout 1
-hello cerr 2
